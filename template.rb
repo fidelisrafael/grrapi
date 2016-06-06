@@ -209,6 +209,7 @@ module CustomTemplateDSL
     gem 'rack-contrib'
     gem 'grape-swagger'
     gem 'colorize'
+    gem 'active_model_serializers', '0.9.3'
   end
 end
 
