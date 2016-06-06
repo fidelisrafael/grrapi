@@ -1,0 +1,9 @@
+staging:
+  app_name: my-api-app-staging
+  remote_name: heroku-stg
+  branch_name: develop
+
+production:
+  app_name: my-api-app-production
+  remote_name: heroku-prod
+  branch_name: master

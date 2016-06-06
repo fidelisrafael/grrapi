@@ -1,0 +1,50 @@
+default: &default
+	development_api_host: "http://localhost:8080/api/"
+	staging_api_host: "api-staging.myapp.mytld"
+	production_api_host: "api.myapp.mytld"
+
+	# front-end site hosts (used to generate mailer links)
+	host: "localhost:9090"
+	site_host: "localhost:9090"
+
+	admin_email: "admin@myapp.mytld"
+	contact_email: "contact@myapp.mytld"
+
+	admin_user_email: "admin_user@myapp.mytld"
+	system_user_email: "system_user_%s@myapp.mytld"
+
+	# enable this to overwrite all cache configuration across app
+	# reminder: if you need cache for some endpoints, take a loke
+	# in application_helpers.rb for methods: `with_cacheable_endpoints` & `respond_with_cacheable`
+	# who provides out of box a cached url for resources. ex:
+	# /api/v1/users
+	# /api/v1/cached/users
+
+	cache_enabled: "false"
+	send_email_async: "true"
+
+	session_duration: "2592000"
+
+	# Use this to determine CORS configuration
+	access_control_allowed_origins: "*"
+	access_control_allowed_request_methods: "*"
+
+	rollbar_access_token: ""
+
+	prefix_api_path: "true"
+
+development:
+	<<: *default
+
+test:
+	<<: *default
+
+staging:
+	<<: *default
+	site_host: "staging.myapp.mytld"
+	host: "api-staging.myapp.mytld"
+
+production:
+	<<: *default
+	site_host: "myapp.mytld"
+	host: "api.myapp.mytld"

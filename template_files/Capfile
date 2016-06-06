@@ -1,0 +1,32 @@
+# BugFix on colorize
+require 'colorize'
+
+# Load DSL and Setup Up Stages
+require 'capistrano/setup'
+require 'capistrano/deploy'
+
+require 'capistrano/rails'
+require 'capistrano/rails/migrations'
+
+require 'capistrano/bundler'
+require 'capistrano/rvm'
+require 'capistrano/puma'
+require 'capistrano/puma/workers'
+require 'capistrano/puma/nginx'
+require 'capistrano/sidekiq'
+
+#### Plugins
+require 'capistrano/safe_deploy_to'
+require 'capistrano/ssh_doctor'
+# require 'capistrano/hostmenu'
+
+require 'capistrano/rails/console'
+require 'capistrano/rails_tail_log'
+require 'capistrano/rails/collection'
+
+require 'airbrussh/capistrano'
+require 'rollbar/capistrano3'
+
+
+# Loads custom tasks from `lib/capistrano/tasks' if you have any defined.
+Dir.glob('lib/capistrano/tasks/*.rake').each { |r| import r }
