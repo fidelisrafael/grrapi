@@ -2,6 +2,8 @@ module API
   module V1
     class Base < API::Base
 
+      include ::API::Helpers::V1::ApplicationHelpers
+
       version 'v1'
 
       add_swagger_documentation(

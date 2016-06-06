@@ -17,7 +17,7 @@ module CustomTemplateDSL
   end
 
   def copy_file_from_api(file_src, dest = nil)
-    copy_file_from 'api', file_src, File.join('app', 'api', dest || File.basename(file_src))
+    copy_file_from 'api', file_src, File.join('app', 'grape', 'api', dest || File.basename(file_src))
   end
 
   def copy_file_from_config(file_src, dest = nil)
@@ -73,6 +73,8 @@ module CustomTemplateDSL
     end
     CODE
     end
+
+    # TODO: Adicionar autoload paths em config/application.rb
   end
 
   def copy_files!
