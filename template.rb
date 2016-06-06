@@ -4,6 +4,10 @@ def source_paths
   [File.expand_path(File.dirname(__FILE__))]
 end
 
+def app_name
+  ARGV[1].underscore rescue 'application'
+end
+
 module CustomTemplateDSL
   def copy_file_to(file_src, file_dest = nil)
     copy_file File.join('template_files', file_src), file_dest || File.basename(file_src)
@@ -25,7 +29,7 @@ module CustomTemplateDSL
   end
 
   def copy_file_from_initializers(file_src, dest = nil)
-    copy_file_from 'initializers', file_src, File.join('config', 'initializers', File.basename(file_src))
+    copy_file_from 'initializers', file_src, File.join('config', 'initializers', dest || File.basename(file_src))
   end
 
   def copy_file_from_lib(file_src, dest = nil)
@@ -40,12 +44,27 @@ module CustomTemplateDSL
     copy_file_from 'tasks', file_src, File.join('lib', 'tasks', File.basename(file_src))
   end
 
+  def make_dir(dest)
+    FileUtils.mkdir_p(dest)
+  end
+
+  def make_empty_dir(dest)
+    create_file "#{dest}/.keep"
+  end
+
+  def make_empty_dirs!
+    make_empty_dir(File.join('app', 'services', app_name, 'v1'))
+    make_empty_dir(File.join('app', 'services', app_name, 'v1'))
+    make_empty_dir(File.join('app', 'workers', app_name, 'v1'))
+  end
+
   def init_template_action!
     copy_files!
     remove_files!
     setup_gems!
     setup_routes!
     append_to_files!
+    make_empty_dirs!
   end
 
   def remove_files!
@@ -74,6 +93,33 @@ module CustomTemplateDSL
     CODE
     end
 
+    inject_into_class "config/application.rb", 'Application' do
+      <<-CODE
+    config.middleware.delete "ActionDispatch::Static"
+    config.middleware.delete "ActionDispatch::Cookies"
+    config.middleware.delete "ActionDispatch::Session::CookieStore"
+    config.middleware.delete "ActionDispatch::Flash"
+    config.middleware.delete "Rack::MethodOverride"
+
+    config.generators do |g|
+      # g.template_engine nil
+      g.stylesheets     false
+      g.javascripts     false
+      g.assets          false
+      g.helper          false
+    end
+
+    config.time_zone                = 'Brasilia'
+    config.i18n.default_locale      = 'pt-BR'.to_sym
+    config.i18n.available_locales   = [:en, :'pt-BR']
+    # load Grape API files
+    config.paths.add File.join('app', 'grape'), glob: File.join('**', '*.rb')
+
+    config.autoload_paths << File.join(Rails.root, 'lib')
+    config.autoload_paths += Dir.glob(File.join(Rails.root, 'app', 'grape', '{**,*}'))
+      CODE
+    end
+
     # TODO: Adicionar autoload paths em config/application.rb
   end
 
@@ -89,6 +135,9 @@ module CustomTemplateDSL
     copy_file_from_config '.heroku-deploy'
 
     copy_file_from_initializers 'app_config.rb'
+    copy_file_from_initializers 'ams.rb'
+    copy_file_from_initializers 'configs/cache.rb', File.join('configs/cache.rb')
+    copy_file_from_initializers 'configs/smtp.rb', File.join('configs/smtp.rb')
 
     copy_file_to File.join('deploy', 'deploy.rb'), File.join('config', 'deploy.rb')
     copy_file_from_deploy 'staging.rb'
