@@ -207,6 +207,7 @@ module CustomTemplateDSL
     gem 'puma'
     gem 'grape', '~> 0.12'
     gem 'rack-contrib'
+    gem 'rack-cors', :require => 'rack/cors'
     gem 'grape-swagger'
     gem 'colorize'
     gem 'active_model_serializers', '0.9.3'
