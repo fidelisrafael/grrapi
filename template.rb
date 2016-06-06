@@ -149,7 +149,7 @@ module CustomTemplateDSL
       gem 'capistrano-rails-collection'
     end
 
-    gem 'simple_services', path: '../../pessoal/simple_services/'
+    gem 'simple_services', git: 'git@bitbucket.org:fidelisrafael/simple_services.git', branch: 'master'
     gem 'bcrypt', '~> 3.1.7'
     gem 'figaro'
     gem 'rollbar', '~> 1.4.4'
