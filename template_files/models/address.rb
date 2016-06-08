@@ -6,7 +6,7 @@ class Address < ActiveRecord::Base
 
   has_one :state, through: :city
 
-  validates :street, :number, :zipcode, presence: true
+  validates :street, :number, :zipcode, :addressable, presence: true
 
   validates_associated :addressable
 end

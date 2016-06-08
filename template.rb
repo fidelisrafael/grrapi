@@ -4,89 +4,42 @@ def source_paths
   [File.expand_path(File.dirname(__FILE__))]
 end
 
-def app_name
-  ARGV[1].underscore rescue 'application'
-end
 
 module CustomTemplateDSL
+
+  BASE_DIR = 'template_files'
+
+  protected def app_name
+    ARGV[1].underscore rescue 'application'
+  end
+
+  protected def copy_directory(src, dest)
+     directory File.join(BASE_DIR, src), dest
+  end
+
+
   def copy_file_to(file_src, file_dest = nil)
     copy_file File.join('template_files', file_src), file_dest || File.basename(file_src)
   end
 
-  def copy_file_from(folder, file, dest = nil)
-    src = File.join(folder, file)
-    dest ||= File.join(File.dirname(src), File.basename(file))
-
-    copy_file_to src, dest
-  end
-
-  def copy_file_from_api(file_src, dest = nil)
-    copy_file_from 'api', file_src, File.join('app', 'grape', 'api', dest || File.basename(file_src))
-  end
-
-  def copy_file_from_config(file_src, dest = nil)
-    copy_file_from 'config', file_src, dest
-  end
-
-  def copy_file_from_initializers(file_src, dest = nil)
-    copy_file_from 'initializers', file_src, File.join('config', 'initializers', dest || File.basename(file_src))
-  end
-
-  def copy_file_from_lib(file_src, dest = nil)
-    copy_file_from 'lib', file_src, dest
-  end
-
-  def copy_file_from_deploy(file_src, dest = nil)
-    copy_file_from 'deploy', file_src, File.join('config', 'deploy', dest || File.basename(file_src) )
-  end
-
-  def copy_file_from_rake_tasks(file_src, dest = nil)
-    copy_file_from 'tasks', file_src, File.join('lib', 'tasks', File.basename(file_src))
-  end
-
-  def make_dir(dest)
-    FileUtils.mkdir_p(dest)
-  end
-
-  def make_empty_dir(dest)
-    create_file "#{dest}/.keep"
-  end
-
-  def make_empty_dirs!
+  def create_empty_directories!
     empty_directory(File.join('app', 'services', app_name, 'v1'))
     empty_directory(File.join('app', 'services', app_name, 'v1'))
     empty_directory(File.join('app', 'workers', app_name, 'v1'))
   end
 
-  def init_template_action!
-    copy_files!
-    remove_files!
-    setup_gems!
-    setup_routes!
-    append_to_files!
-    make_empty_dirs!
-    copy_models!
-  end
-
   def copy_models!
-    directory 'template_files/migrations', File.join('db', 'migrate')
-    directory 'template_files/models', File.join('app', 'models')
-    directory 'template_files/spec', 'spec'
+    copy_directory 'migrations', File.join('db', 'migrate')
+    copy_directory 'models', File.join('app', 'models')
+    copy_directory 'spec', 'spec'
   end
 
-  def remove_files!
-    remove_dir 'app/controllers'
-    remove_dir 'app/helpers'
-    remove_dir 'app/assets'
-    remove_dir 'app/views'
-  end
-
-  def append_to_files!
+  def append_content_to_files!
     # This file is used by Rack-based servers to start the application.
-
     append_to_file "config.ru" do
     <<-CODE
-    \nrequire 'rack/cors'
+    \n
+    require 'rack/cors'
 
     use Rack::Cors do
       # allow all origins in development
@@ -124,39 +77,35 @@ module CustomTemplateDSL
 
     config.autoload_paths << File.join(Rails.root, 'lib')
     config.autoload_paths += Dir.glob(File.join(Rails.root, 'app', 'grape', '{**,*}'))
+
+    config.web_console.development_only = true
       CODE
     end
-
-    # TODO: Adicionar autoload paths em config/application.rb
   end
 
   def copy_files!
-    copy_file_from_api 'base.rb'
-    copy_file_from_api 'v1_base.rb', File.join('v1', 'base.rb')
+    copy_directory 'api', File.join('app', 'grape', 'api')
 
-    copy_file_from_api 'application_helpers.rb', File.join('helpers', 'application_helpers.rb')
-    copy_file_from_api 'application_v1_helpers.rb', File.join('helpers', 'v1', 'application_helpers.rb')
+    copy_directory 'config', 'config'
+    copy_directory 'initializers', File.join('config', 'initializers')
 
-    copy_file_from_config 'application.yml'
-    copy_file_from_config 'puma.rb'
-    copy_file_from_config '.heroku-deploy'
+    copy_directory 'deploy', File.join('config', 'deploy')
 
-    copy_file_from_initializers 'app_config.rb'
-    copy_file_from_initializers 'ams.rb'
-    copy_file_from_initializers 'configs/cache.rb', File.join('configs/cache.rb')
-    copy_file_from_initializers 'configs/smtp.rb', File.join('configs/smtp.rb')
+    copy_directory 'lib', 'lib'
 
-    copy_file_to File.join('deploy', 'deploy.rb'), File.join('config', 'deploy.rb')
-    copy_file_from_deploy 'staging.rb'
-    copy_file_from_deploy 'production.rb'
-
-
-    copy_file_from_lib 'rake_heroku_deployer.rb'
-    copy_file_from_rake_tasks 'app_tasks.rake'
+    copy_directory 'rake_tasks', File.join('lib', 'tasks')
 
     copy_file_to 'Capfile'
     copy_file_to 'Procfile'
     copy_file_to 'contributors.txt'
+    copy_file_to '.rspec'
+  end
+
+  def remove_files!
+    remove_dir 'app/controllers'
+    remove_dir 'app/helpers'
+    remove_dir 'app/assets'
+    remove_dir 'app/views'
   end
 
   def setup_routes!
@@ -175,7 +124,6 @@ module CustomTemplateDSL
       gem 'factory_girl_rails', '~> 4.0'
       gem 'rspec-rails', '~> 3.0'
       gem 'shoulda-matchers', '~> 3.1'
-      gem 'shoulda-matchers', require: false
       gem 'nyan-cat-formatter'
     end
 
@@ -208,7 +156,13 @@ module CustomTemplateDSL
       gem 'capistrano-rails-collection'
     end
 
+    # TODO: Organizar por ordem alfabetica e grupos
     gem 'database_cleaner'
+    gem 'carrierwave', require: ['carrierwave', 'carrierwave/orm/activerecord']
+    gem 'fog'
+    gem 'piet'
+    gem 'sinatra', require: false
+    gem 'sidekiq'
     gem 'faker'
     gem 'simple_services', git: 'git@bitbucket.org:fidelisrafael/simple_services.git', branch: 'master'
     gem 'bcrypt', '~> 3.1.7'
@@ -222,6 +176,18 @@ module CustomTemplateDSL
     gem 'colorize'
     gem 'active_model_serializers', '0.9.3'
   end
+
+
+  def init_template_action!
+    copy_files!
+    remove_files!
+    setup_routes!
+    append_content_to_files!
+    create_empty_directories!
+    copy_models!
+    setup_gems!
+  end
+
 end
 
 extend CustomTemplateDSL
