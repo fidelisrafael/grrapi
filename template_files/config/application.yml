@@ -1,5 +1,26 @@
 default: &default
-  authentication_providers: '["faker", "ios", "android", "web"]' # must be a valid JSON
+  authentication_providers: '["faker", "ios", "android", "web", "postman"]' # must be a valid JSON
+  authentication_token_expiration_seconds: '432000' # 5.days
+  force_account_activation_to_enable_login: 'true'
+
+  enable_max_login_attempts_block: 'true'
+  max_allowed_login_attempts: '10'
+  login_block_period: '86400' # 1.day
+
+  # This configure how many simultaneous sessions will be allowed by authentication provider (client)
+  # eg: 1 unique session per provider (1 session in Android, 1 session in web...)
+  # Set to -1 to allow infinite simultaneous sessions per user'
+  max_simultaneous_authorizations_per_provider: '1'
+
+  # Auth HTTP Request related config
+  auth_token_http_header: 'X-Token'
+  auth_token_provider_http_header: 'X-Provider'
+  current_locale_http_header: 'X-Locale'
+  #
+  auth_token_http_param: 'auth_token'
+  auth_token_provider_http_param: 'auth_provider'
+  current_locale_http_param: 'locale'
+
   development_api_host: "http://localhost:8080/api/"
   staging_api_host: "api-staging.myapp.mytld"
   production_api_host: "api.myapp.mytld"
@@ -32,7 +53,11 @@ default: &default
 
   rollbar_access_token: ""
 
+  # enable this to prefix all routes with prefix
   prefix_api_path: "true"
+  # prefix add to ALL routes in application
+  # eg: /api/users/1
+  api_prefix_path: 'api'
 
 development:
   <<: *default

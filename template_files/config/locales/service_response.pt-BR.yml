@@ -1,0 +1,25 @@
+---
+'pt-BR':
+  simple_services:
+    errors:
+      auth:
+        invalid_user_credentials: "Login inválido."
+        invalid_auth_token: "Token de autenticação inválido."
+        invalid_auth_provider: "Provider de login inválido: Providers válidos são: %{valid_providers}"
+        user_login_blocked: "Login bloqueado até: %{blocked_until}"
+        user_account_not_activated: "Você deve confirmar seu endereço de email para efetuar login."
+
+      cities:
+        not_found: "Cidade inválida ou não encontrada."
+        cant_access: "Usuário não pode acessar esta cidade."
+
+      states:
+        not_found: "Estado inválido ou não encontrado."
+        cant_access: "Usuário não pode acessar este estado."
+
+      users:
+        not_found: "Usuário inválido ou não encontrado."
+        invalid_password_update_token: "Token inválido."
+        user_cant_execute_send_account_activation_mail: 'Por favor, aguarde alguns minutos para solicitar um novo reenvio do email.'
+        cant_send_password_reset_request: 'Por favor, aguarde alguns minutos para solicitar um novo reenvio do email.'
+        password_combination_dont_match: 'As senhas não são idênticas'

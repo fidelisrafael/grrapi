@@ -1,0 +1,25 @@
+---
+en:
+  simple_services:
+    errors:
+      auth:
+        invalid_user_credentials: "Invalid login credentials."
+        invalid_auth_token: "Invalid authentication token."
+        invalid_auth_provider: "Invalid provider, valid providers are: %{valid_providers}"
+        user_login_blocked: "Login blocked until: %{blocked_until}"
+        user_account_not_activated: "You must activate your account"
+
+      cities:
+        not_found: 'City invalid or not found.'
+        cant_access: "User can't access this city."
+
+      states:
+        not_found: 'State invalid or not found.'
+        cant_access: "User can't access this state."
+
+      users:
+        not_found: 'Invalid or not found user.'
+        invalid_password_update_token: 'Invalid token.'
+        user_cant_execute_send_account_activation_mail: 'Please, wait a few minutes to request a new mail.'
+        cant_send_password_reset_request: 'Please, wait a few minutes to request a new mail.'
+        password_combination_dont_match: 'password_combination dont match password'

@@ -3,8 +3,6 @@ module API
     module V1
       module ApplicationHelpers
 
-        extend Grape::API::Helpers
-
         def simple_response_for_service(service)
           status service.response_status
 

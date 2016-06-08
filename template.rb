@@ -23,8 +23,7 @@ module CustomTemplateDSL
   end
 
   def create_empty_directories!
-    empty_directory(File.join('app', 'services', app_name, 'v1'))
-    empty_directory(File.join('app', 'services', app_name, 'v1'))
+    # empty_directory(File.join('app', 'services', app_name, 'v1'))
     empty_directory(File.join('app', 'workers', app_name, 'v1'))
   end
 
@@ -72,11 +71,14 @@ module CustomTemplateDSL
     config.time_zone                = 'Brasilia'
     config.i18n.default_locale      = 'pt-BR'.to_sym
     config.i18n.available_locales   = [:en, :'pt-BR']
-    # load Grape API files
-    config.paths.add File.join('app', 'grape'), glob: File.join('**', '*.rb')
 
-    config.autoload_paths << File.join(Rails.root, 'lib')
+    # Add lib folder to autoload paths (to auto reload code when changed)
+    config.paths.add File.join(Rails.root, 'lib'), glob: File.join('**', '*.rb')
+    config.autoload_paths << Rails.root.join('lib')
+
+    # load Grape API files
     config.autoload_paths += Dir.glob(File.join(Rails.root, 'app', 'grape', '{**,*}'))
+    config.paths.add File.join(Rails.root, 'app', 'grape'), glob: File.join('**', '*.rb')
 
     config.web_console.development_only = true
       CODE
@@ -95,10 +97,13 @@ module CustomTemplateDSL
 
     copy_directory 'rake_tasks', File.join('lib', 'tasks')
 
+    copy_directory 'services', File.join('lib', 'services')
+
     copy_file_to 'Capfile'
     copy_file_to 'Procfile'
     copy_file_to 'contributors.txt'
     copy_file_to '.rspec'
+    copy_file_to '.editorconfig'
   end
 
   def remove_files!
