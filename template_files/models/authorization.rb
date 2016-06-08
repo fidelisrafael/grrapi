@@ -45,7 +45,7 @@ class Authorization < ActiveRecord::Base
   end
 
   def expiration_date_from_now
-    Time.zone.now + Moovup::Config.session_duration.to_i.seconds
+    Time.zone.now + Application::Config.session_duration.to_i.seconds
   end
 
   def generate_token
