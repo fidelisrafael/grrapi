@@ -1,9 +1,10 @@
 module API
   class Base < Grape::API
 
-    include API::Helpers::ApplicationHelpers
+    helpers API::Helpers::ApplicationHelpers
+    helpers API::Helpers::AuthHelpers
 
-    prefix 'api' if Application::Config.enabled?(:prefix_api_path)
+    prefix Application::Config.api_prefix_path if Application::Config.enabled?(:prefix_api_path)
 
     format :json
 

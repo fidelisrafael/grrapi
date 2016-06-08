@@ -2,7 +2,8 @@ module API
   module V1
     class Base < API::Base
 
-      include ::API::Helpers::V1::ApplicationHelpers
+      helpers API::Helpers::V1::ApplicationHelpers
+      helpers API::Helpers::V1::AuthHelpers
 
       version 'v1'
 
@@ -13,6 +14,7 @@ module API
         api_version: 'v1'
       )
 
+      mount V1::Routes::UsersAuth
     end
   end
 end

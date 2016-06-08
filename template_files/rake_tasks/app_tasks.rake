@@ -43,11 +43,12 @@ end
 
 namespace :api do
   def puts_api_endpoint(endpoint)
-    method = endpoint.route_method.ljust(10)
-    path = endpoint.route_path.gsub(":version", endpoint.route_version)
+    method = endpoint.request_method.ljust(10)
+
+    path = endpoint.path.gsub(":version", endpoint.version)
 
     if ENV['DESCRIPTION'].present?
-      description = endpoint.route_description
+      description = endpoint.description
       if description
         puts ">> #{description}"
       else
@@ -63,7 +64,7 @@ namespace :api do
     routes = API::Base.routes
 
     if ENV['GROUPED']
-      routes.group_by { |endpoint| endpoint.route_method }.each do |method, endpoints|
+      routes.group_by { |endpoint| endpoint.request_method }.each do |method, endpoints|
         endpoints.each do |endpoint|
           puts_api_endpoint(endpoint)
         end
