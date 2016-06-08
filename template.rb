@@ -79,8 +79,6 @@ module CustomTemplateDSL
     # load Grape API files
     config.autoload_paths += Dir.glob(File.join(Rails.root, 'app', 'grape', '{**,*}'))
     config.paths.add File.join(Rails.root, 'app', 'grape'), glob: File.join('**', '*.rb')
-
-    config.web_console.development_only = true
       CODE
     end
   end
@@ -111,6 +109,7 @@ module CustomTemplateDSL
     remove_dir 'app/helpers'
     remove_dir 'app/assets'
     remove_dir 'app/views'
+    remove_dir 'test' # rails new -T dont create this directory, otherwise delete it
   end
 
   def setup_routes!
