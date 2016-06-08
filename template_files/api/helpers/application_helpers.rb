@@ -12,7 +12,7 @@ module API
       CURRENT_LOCALE_HTTP_HEADER = Application::Config.current_locale_http_header
       CURRENT_LOCALE_HTTP_PARAM  = Application::Config.current_locale_http_param
 
-      DEFAULT_LOCALE = (ENV['LOCALE'] || "pt-BR").to_sym
+      DEFAULT_LOCALE = (ENV['LOCALE'] || Application::Config.default_locale || 'en').to_sym
 
       ALLOWED_PAGINATION_PER_PAGE = (1..10).map { |value| value * 10 }
 
