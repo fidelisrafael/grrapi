@@ -121,7 +121,6 @@ module CustomTemplateDSL
       gem 'brakeman', require: false
       gem 'letter_opener'
       gem 'rubocop', require: false
-      gem 'pry'
     end
 
     gem_group :staging, :test do
@@ -161,6 +160,7 @@ module CustomTemplateDSL
     end
 
     # TODO: Organizar por ordem alfabetica e grupos
+    gem 'pry'
     gem 'database_cleaner'
     gem 'carrierwave', require: ['carrierwave', 'carrierwave/orm/activerecord']
     gem 'fog'
