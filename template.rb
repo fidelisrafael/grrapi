@@ -53,9 +53,9 @@ module CustomTemplateDSL
   end
 
   def make_empty_dirs!
-    make_empty_dir(File.join('app', 'services', app_name, 'v1'))
-    make_empty_dir(File.join('app', 'services', app_name, 'v1'))
-    make_empty_dir(File.join('app', 'workers', app_name, 'v1'))
+    empty_directory(File.join('app', 'services', app_name, 'v1'))
+    empty_directory(File.join('app', 'services', app_name, 'v1'))
+    empty_directory(File.join('app', 'workers', app_name, 'v1'))
   end
 
   def init_template_action!
@@ -65,6 +65,13 @@ module CustomTemplateDSL
     setup_routes!
     append_to_files!
     make_empty_dirs!
+    copy_models!
+  end
+
+  def copy_models!
+    directory 'template_files/migrations', File.join('db', 'migrate')
+    directory 'template_files/models', File.join('app', 'models')
+    directory 'template_files/spec', 'spec'
   end
 
   def remove_files!
@@ -161,14 +168,15 @@ module CustomTemplateDSL
       gem 'brakeman', require: false
       gem 'letter_opener'
       gem 'rubocop', require: false
+      gem 'pry'
     end
 
-    gem_group :development, :staging, :test do
+    gem_group :staging, :test do
       gem 'factory_girl_rails', '~> 4.0'
+      gem 'rspec-rails', '~> 3.0'
+      gem 'shoulda-matchers', '~> 3.1'
       gem 'shoulda-matchers', require: false
       gem 'nyan-cat-formatter'
-      gem 'rspec-rails', '~> 3.0'
-      gem 'pry'
     end
 
     # deploy specific
@@ -200,6 +208,8 @@ module CustomTemplateDSL
       gem 'capistrano-rails-collection'
     end
 
+    gem 'database_cleaner'
+    gem 'faker'
     gem 'simple_services', git: 'git@bitbucket.org:fidelisrafael/simple_services.git', branch: 'master'
     gem 'bcrypt', '~> 3.1.7'
     gem 'figaro'
