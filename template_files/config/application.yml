@@ -1,4 +1,5 @@
 default: &default
+  authentication_providers: '["faker", "ios", "android", "web"]' # must be a valid JSON
   development_api_host: "http://localhost:8080/api/"
   staging_api_host: "api-staging.myapp.mytld"
   production_api_host: "api.myapp.mytld"

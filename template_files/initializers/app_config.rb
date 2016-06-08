@@ -8,6 +8,10 @@ module Application
 
     module_function
 
+    def self.authentication_providers
+      JSON.parse(CONFIG.authentication_providers || '[]')
+    end
+
     CONFIG.each_key do |key|
       define_method "#{key}_enabled?" do
         enabled?(key)
