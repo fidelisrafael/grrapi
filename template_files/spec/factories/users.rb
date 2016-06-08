@@ -12,5 +12,10 @@ FactoryGirl.define do
       basic_data
     end
 
+    factory :simple_user_activated, parent: :simple_user do
+      after(:build) {|user| user.activate_account! }
+      after(:create) {|user| user.activate_account! }
+    end
+
   end
 end

@@ -14,7 +14,7 @@ RSpec.describe Authorization, type: :model do
   end
 
   it 'must normalize provider name' do
-    provider = Authorization::PROVIDERS.keys.first.to_s
+    provider = Authorization::PROVIDERS.first.to_s
 
     @authorization.provider = provider.upcase
 
@@ -79,16 +79,21 @@ RSpec.describe Authorization, type: :model do
   end
 
   it 'must be valid with new providers' do
-    Authorization::PROVIDERS[:tv_app] = 'TvApp'
+    new_provider = 'TvApp'
 
-    @authorization = build(:authorization, provider: :tv_app)
+    Authorization::PROVIDERS.push(new_provider)
+
+    @authorization = build(:authorization, provider: new_provider)
 
     @authorization.class_eval do
       _validate_callbacks.clear
-      validates :provider, inclusion: Authorization::PROVIDERS.keys.map(&:to_s)
+      validates :provider, inclusion: Authorization::PROVIDERS.map(&:to_s)
     end
 
-    expect(@authorization).to be_valid
+    # update reference
+    @authorization = @authorization.dup
+
+    expect(@authorization.dup).to be_valid
     expect(@authorization.errors[:provider]).to eq([])
   end
 

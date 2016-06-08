@@ -2,7 +2,7 @@
 
 class Authorization < ActiveRecord::Base
 
-  PROVIDERS = Application::Config.authentication_providers
+  PROVIDERS = Application::Config.authentication_providers.dup
 
   DEFAULT_EXPIRATION_TIME = 432000 # 5.days - Default config if not set in config/application.yml
 
