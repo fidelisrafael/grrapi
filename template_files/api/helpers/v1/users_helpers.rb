@@ -6,7 +6,7 @@ module API
         def user_provider_auth_response(service)
           if service.success?
             # success_response_for_auth_service
-            response = user_success_response_for_service(service, new_user: service.new_user?)
+            response = success_response_for_auth_service(service, new_user: service.new_user?)
           else
             status service.response_status
             response = error_response_for_service(service)
@@ -15,10 +15,11 @@ module API
           response
         end
 
-        def user_success_response_for_service(service, merge_response = {})
+        def success_response_for_auth_service(service, merge_response = {}, options = {})
           status service.response_status
+          options = { serializer: %s(Auth::AuthenticationService) }.merge(options)
 
-          serializer_response = serialized_object(service, serializer: :user_auth_service).as_json
+          serializer_response = serialized_object(service, options).as_json
 
           {
             success: true,
@@ -28,7 +29,7 @@ module API
 
         def user_auth_response(service)
           if service.success?
-            response = user_success_response_for_service(service)
+            response = success_response_for_auth_service(service)
           else
             status service.response_status
 

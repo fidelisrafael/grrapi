@@ -5,6 +5,13 @@ module Services
   end
 end
 
+module SimpleServices
+  class BaseCrudService < BaseCrudService.superclass
+    def self.services_concern_namespace
+      "Services::V1"
+    end
+  end
+end
 
 [:BaseService, :BaseCrudService].each do |service|
   klasses = ["Services::#{service}", "SimpleServices::#{service}"].each do |klass|
