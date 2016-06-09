@@ -23,6 +23,8 @@ default: &default
   auth_token_provider_http_param: 'auth_provider'
   current_locale_http_param: 'locale'
 
+  seconds_to_wait_between_account_activation_mail_resend: '120' # 2 minutes
+
   development_api_host: "http://localhost:8080/api/"
   staging_api_host: "api-staging.myapp.mytld"
   production_api_host: "api.myapp.mytld"

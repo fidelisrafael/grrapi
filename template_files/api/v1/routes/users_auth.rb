@@ -27,6 +27,16 @@ module API
 
               user_success_response_for_service(auth_token_validate_service)
             end
+
+            desc 'Clear user authorizations for token provider'
+            delete  do
+              authenticate_user
+
+              token_service = auth_token_validate_service
+              success = token_service.auth_token.try(:destroy)
+
+              simple_response_for_service(token_service)
+            end
           end
 
           namespace :password_reset do
@@ -71,14 +81,33 @@ module API
             end
           end
 
-          desc 'Clear user authorizations for token provider'
-          delete '/:logout_action', requirements: { logout_action: /(logout|auth)/ }  do
-            authenticate_user
+          desc 'Activate an user account'
+          params do
+            requires :token, type: String, allow_blank: false
+          end
+          post :activate_account do
+            user = User.not_activated.find_by(activation_token: params[:token])
 
-            token_service = auth_token_validate_service
-            success = token_service.auth_token.try(:destroy)
+            service = execute_service('Users::ActivateAccountService', user, user, params)
 
-            simple_response_for_service(token_service)
+            response_extra = {
+              user_name: service.user_name,
+              yet_activated: service.yet_activated?(params[:token])
+            }
+
+            response_for_service(service, response_extra, true)
+          end
+
+          desc 'Resend account confirmation mail'
+          params do
+            requires :email, type: String, allow_blank: false
+          end
+          post :resend_activation_mail do
+            user = User.not_activated.find_by(email: params[:email])
+
+            service = execute_service('Users::ActivateAccountMailerDeliveryService', user, params)
+
+            simple_response_for_service(service)
           end
         end
       end
