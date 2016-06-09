@@ -1,0 +1,50 @@
+<!DOCTYPE>
+<html>
+ <head>
+  <link href='https://fonts.googleapis.com/css?family=Hind+Siliguri' rel='stylesheet' type='text/css'>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title><%= Application::Config.application_name %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</html>
+
+<body style="margin: 0; padding: 0;">
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
+    <% if [Application::Config.aws_region, Application::Config.aws_bucket_name].all?(&:present?) %>
+      <tr>
+        <td align="" style="padding: 20px 0 20px 20px;">
+            <img src="https://s3-<%= ::Application::Config.aws_region %>.amazonaws.com/<%= ::Application::Config.aws_bucket_name %>/images/logo.png" alt="<%= Application::Config.application_name %>" style="display: block;" />
+        </td>
+      </tr>
+
+      <tr>
+        <td style="font-size: 0; line-height: 0;" height="10">&nbsp;</td>
+      </tr>
+    <% end %>
+
+    <td bgcolor="#ffffff" style="padding: 10px 30px 40px 30px;">
+     <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr>
+       <td style="color: #555; font-family: Hindi Siliguri, sans-serif; font-size: 14px; line-height: 20px;">
+
+        <%= yield %>
+
+        <p>Atenciosamente<br /></p>
+       </td>
+      </tr>
+    </td>
+    <tr >
+      <td align="right" style="color: #fff; font-family: Hind Siliguri, sans-serif; font-size: 16px;  padding: 10px 10px 30px 10px;" >
+        <% if [Application::Config.aws_region, Application::Config.aws_bucket_name].all?(&:present?) %>
+         <a href="<%= Application::Config.site_url %>" align="left" bgcolor="" style="color: #fff; font-family: Hind Siliguri, sans-serif; font-size: 16px text-decoration: none;" >
+          <img src="https://s3-<%= ::Application::Config.aws_region %>.amazonaws.com/<%= ::Application::Config.aws_bucket_name %>/images/redes-sociais.png" alt="Redes Sociais" style="display: block;" />
+          </a>
+          <br>
+        <% end %>
+
+        <a href="<%= Application::Config.site_url %>" align="right" style="color: #fff; font-family: Hind Siliguri, sans-serif; font-size: 12px; text-decoration: none;" >
+          <%= Application::Config.site_url %>
+        </a>
+      </td>
+ </tr>
+</table>
+</body>

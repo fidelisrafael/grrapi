@@ -66,7 +66,7 @@ module API
               identifier = params[:user][:identifier]
               user  = User.find_by('email = :identifier OR username = :identifier', identifier: identifier)
 
-              service = execute_service('Users::PasswordRecoveryService', user, params)
+              service = execute_service('Auth::PasswordRecoveryService', user, params)
 
               response_service = {}
 
@@ -89,7 +89,7 @@ module API
             put '/:token' do
               user = User.find_by(reset_password_token: params[:token])
 
-              service  = execute_service('Users::PasswordUpdateService', user, params)
+              service  = execute_service('Auth::PasswordUpdateService', user, params)
 
               response_for_service(service, user_name: service.user_name)
             end

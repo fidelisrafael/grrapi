@@ -96,6 +96,10 @@ module CustomTemplateDSL
     copy_directory 'rake_tasks', File.join('lib', 'tasks')
 
     copy_directory 'services', File.join('lib', 'services')
+    copy_directory 'serializers', File.join('lib', 'serializers')
+
+    copy_directory 'mailers', File.join('app', 'mailers')
+    copy_directory 'views', File.join('app', 'views')
 
     copy_file_to 'Capfile'
     copy_file_to 'Procfile'
@@ -108,7 +112,7 @@ module CustomTemplateDSL
     remove_dir 'app/controllers'
     remove_dir 'app/helpers'
     remove_dir 'app/assets'
-    remove_dir 'app/views'
+    remove_file 'app/views/layouts/application.html.erb'
     remove_dir 'test' # rails new -T dont create this directory, otherwise delete it
   end
 

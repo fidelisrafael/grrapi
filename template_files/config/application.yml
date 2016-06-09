@@ -25,12 +25,21 @@ default: &default
 
   seconds_to_wait_between_account_activation_mail_resend: '120' # 2 minutes
 
+  account_confirmation_url_format: "%{site_url}/%{slug}/%{token}"
+  account_confirmation_url_site_url: "http://localhost:8080"
+  account_confirmation_url_site_slug: "confirmar-conta"
+
+  password_update_url_format: "%{site_url}/%{slug}/%{token}"
+  password_update_url_site_url: "http://localhost:8080"
+  password_update_url_site_slug: "confirmar-conta"
+
   development_api_host: "http://localhost:8080/api/"
   staging_api_host: "api-staging.myapp.mytld"
   production_api_host: "api.myapp.mytld"
 
   # front-end site hosts (used to generate mailer links)
   host: "localhost:9090"
+  site_url:  "http://localhost:8080" # used in mail to generate links
   site_host: "localhost:9090"
 
   admin_email: "admin@myapp.mytld"
@@ -47,7 +56,7 @@ default: &default
   # /api/v1/cached/users
 
   cache_enabled: "false"
-  send_email_async: "true"
+  send_email_async: "false"
 
   session_duration: "2592000"
 
