@@ -14,6 +14,7 @@ module API
         api_version: 'v1'
       )
 
+      mount V1::Routes::Users
       mount V1::Routes::UsersAuth
     end
   end

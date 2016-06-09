@@ -29,7 +29,7 @@ module API
 
         serializer_name = get_serializer_name_for_request(serializer_name)
 
-        "#{app_name}/#{version}/#{serializer_name}_serializer".camelize
+        "#{app_serializers_namespace}/#{version}/#{serializer_name}_serializer".camelize
       end
 
       def get_serializer_name_for_request(serializer_name)
@@ -163,6 +163,11 @@ module API
       def app_services_namespace
         # app_name.camelize
         'Services'
+      end
+
+      def app_serializers_namespace
+        # app_name.camelize
+        'Serializers'
       end
 
     end
