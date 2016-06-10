@@ -24,7 +24,7 @@ module UserConcerns
 
       validates :password, confirmation: true, if: :needs_password_validation?
 
-      before_validation :generate_activation_token
+      before_save :generate_activation_token
 
       def self.authenticate(email, password)
         return false unless email && password
