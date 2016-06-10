@@ -24,6 +24,10 @@ module Services
         end
 
         private
+        def create_origin?
+          new_user?
+        end
+
         def current_auth_provider
           @options[Application::Config.auth_token_provider_http_param || :auth_provider] || DEFAULT_PROVIDER
         end

@@ -21,7 +21,11 @@ class SimpleServices::BaseCreateService
   end
 
   def create_origin_async(originable, params = {})
-    create_origin(originable, params)
+    create_origin(originable, params) if create_origin?
+  end
+
+  def create_origin?
+    Application::Config.create_origin_for_records
   end
 end
 

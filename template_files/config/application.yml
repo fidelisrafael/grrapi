@@ -57,6 +57,7 @@ default: &default
 
   cache_enabled: "false"
   send_email_async: "false"
+  create_origin_for_records: "true"
 
   session_duration: "2592000"
 
