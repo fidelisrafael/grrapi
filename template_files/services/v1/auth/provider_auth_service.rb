@@ -46,7 +46,7 @@ module Services
         end
 
         def init_oauth_provider_class
-          "Moovup::V1::Users::AuthProviders::#{provider.to_s.camelize}".constantize.send(:new, @access_token)
+          "Services::V1::Users::AuthProviders::#{provider.to_s.camelize}".constantize.send(:new, @access_token)
         end
 
         def can_create_record?
