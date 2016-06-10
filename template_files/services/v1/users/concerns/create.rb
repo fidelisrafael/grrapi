@@ -27,7 +27,7 @@ module Services
 
           POSTMON_ENDPOINT = 'http://api.postmon.com.br/v1/cep/%s'
 
-          DEFAULT_PROVIDER = :site
+          DEFAULT_PROVIDER = :web
 
           included do
             def user_params

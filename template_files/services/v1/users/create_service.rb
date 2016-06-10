@@ -24,8 +24,22 @@ module Services
         end
 
         private
+        def current_auth_provider
+          @options[Application::Config.auth_token_provider_http_param || :auth_provider] || DEFAULT_PROVIDER
+        end
+
+        def valid_authentication_provider?
+          return false if current_auth_provider.blank?
+
+          Authorization::PROVIDERS.member?(current_auth_provider.to_s)
+        end
+
         def can_create_record?
-          return user_params.any?
+          unless valid_authentication_provider?
+            return unprocessable_entity_error!(%s(users.invalid_authentication_provider))
+          end
+
+          return true
         end
 
         def build_record
@@ -38,7 +52,7 @@ module Services
 
         def create_authorization
           if @record.account_activated?
-            return @authorization ||= @record.authorizations.create(provider: @options[:provider] || DEFAULT_PROVIDER)
+            return @authorization ||= @record.authorizations.create(provider: current_auth_provider)
           end
 
           @authorization = nil

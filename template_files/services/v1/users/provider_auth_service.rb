@@ -53,24 +53,14 @@ module Services
           return false if @access_token.blank?
 
           unless valid_service_oauth_provider?
-            return unprocessable_entity_error!('users.invalid_service_oauth_provider')
+            return unprocessable_entity_error!(%s(users.invalid_service_oauth_provider))
           end
 
-          unless valid_authentication_provider?
-            return unprocessable_entity_error!('users.invalid_authentication_provider')
-          end
-
-          return true
+          super
         end
 
         def valid_user?
           return true
-        end
-
-        def valid_authentication_provider?
-          return false if @options[:provider].blank?
-
-          Authorization::PROVIDERS.member?(@options[:provider].to_s)
         end
 
         def valid_service_oauth_provider?
