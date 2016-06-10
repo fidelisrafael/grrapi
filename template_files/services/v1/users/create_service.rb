@@ -25,7 +25,7 @@ module Services
 
         private
         def can_create_record?
-          return true
+          return user_params.any?
         end
 
         def build_record
