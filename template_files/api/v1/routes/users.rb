@@ -17,7 +17,7 @@ module API
               requires :password_confirmation, type: String, regexp: User::PASSWORD_REGEXP
             end
 
-            requires :provider, values: Authorization::PROVIDERS.map(&:to_s)
+            requires :auth_provider, values: Authorization::PROVIDERS.map(&:to_s)
           end
 
           post do

@@ -10,7 +10,7 @@ module API
 
             desc 'Authenticate an user using email and password'
             params do
-              requires :provider, type: String
+              requires :auth_provider, type: String
               requires :email   , type: String
               requires :password, type: String
             end
