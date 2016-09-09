@@ -1,0 +1,6 @@
+{
+  "notify_password_updated": "true",
+  "notify_account_confirmated": "true",
+  "notify_official_statement": "true",
+  "notify_welcome": "true"
+}

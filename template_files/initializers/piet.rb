@@ -7,12 +7,14 @@ module Piet
       true
     end
 
+    alias :optimize_png_using_pngquant :optimize_png
+
     private
     def optimize_png(path, opts)
       if Application::Config.enabled?(:optimize_png_using_pngquant)
         self.pngquant(path)
       else
-        super(path, opts)
+        optimize_png_using_pngquant(path, opts)
       end
     end
 

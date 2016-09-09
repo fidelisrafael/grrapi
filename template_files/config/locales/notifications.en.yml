@@ -1,0 +1,5 @@
+en:
+  notifications:
+    welcome: "Hi %{receiver_user_name}, you are in! Welcome!"
+    account_confirmated: "Hi %{receiver_user_name} your account was sucessfully activated!"
+    password_updated: "Your password has been successfully updated (You will be logged out of all devices)."

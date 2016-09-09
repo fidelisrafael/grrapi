@@ -1,11 +1,11 @@
 module Services
   module V1
     module Users
-      class CreateService < SimpleServices::BaseCreateService
+      class CreateService < BaseCreateService
 
         record_type ::User
 
-        concern :Users, :Create
+        concern :Users, :CreateUpdate
 
         attr_reader :authorization
 
@@ -20,34 +20,41 @@ module Services
         end
 
         def new_user?
-          @record.persisted?
+          return true
         end
 
         private
+        def after_build_record
+          set_address_for_user if create_address?
+        end
+
         def create_origin?
           new_user?
         end
 
-        def current_auth_provider
-          @options[Application::Config.auth_token_provider_http_param || :auth_provider] || DEFAULT_PROVIDER
+        def user_can_create_record?
+          perform_validations
         end
 
-        def valid_authentication_provider?
-          return false if current_auth_provider.blank?
-
-          Authorization::PROVIDERS.member?(current_auth_provider.to_s)
-        end
-
-        def can_create_record?
-          unless valid_authentication_provider?
-            return unprocessable_entity_error!(%s(users.invalid_authentication_provider))
-          end
-
+        def valid_user?
           return true
         end
 
-        def build_record
-          User.new(user_params)
+        def after_success
+          after_success_actions
+        end
+
+        def after_success_actions
+          create_authorization
+          execute_async_actions
+        end
+
+        def create_address?
+          return false if @options[:create_address] == false
+
+          return false if superuser_creation?
+
+          (@temp_record || @record).address.blank?
         end
 
         def async?
@@ -63,19 +70,19 @@ module Services
         end
 
         def execute_async_actions
-        end
+          # try to find `device` key in @options[:device] && @options[:user][:device]
+          update_service_options = @options
+                                    .slice(:origin, :device)
+                                    .merge(@options.fetch(:user, {}).slice(:device))
 
-        def valid_user?
-          return true
-        end
+          update_service_options[:notify_user] = new_user?
+          update_service_options[:device] && update_service_options[:device][:origin] = origin_params(@options[:origin])
 
-        def after_success
-          after_success_actions
-        end
-
-        def after_success_actions
-          create_authorization
-          execute_async_actions
+          if async?
+            Workers::V1::UserSignupUpdateWorker.perform_async(@record.id, update_service_options)
+          else
+            Workers::V1::UserSignupUpdateWorker.new.perform(@record.id, update_service_options)
+          end
         end
       end
     end

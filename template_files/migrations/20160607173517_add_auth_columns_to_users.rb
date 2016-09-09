@@ -21,5 +21,7 @@ class AddAuthColumnsToUsers < ActiveRecord::Migration
     add_index :users, :oauth_provider
     add_index :users, :oauth_provider_uid
     add_index :users, [:oauth_provider, :oauth_provider_uid], unique: true
+    add_index :users, :reset_password_token, unique: true
+    add_index :users, :activation_token, unique: true
   end
 end

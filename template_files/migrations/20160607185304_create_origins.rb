@@ -10,6 +10,6 @@ class CreateOrigins < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_index :origins, [:originable_id, :originable_type]
+    add_index :origins, [:originable_id, :originable_type], unique: true
   end
 end

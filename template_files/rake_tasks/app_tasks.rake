@@ -2,43 +2,43 @@ require_relative '../rake_heroku_deployer'
 
 namespace :db do
 
-	desc "Truncate all existing data"
-	task :truncate => :environment do
-		options = {}
-		tables  = ENV['TABLES'].present? ? ENV['TABLES'].split(",").map(&:squish) : nil
-		options[:only] = tables if tables
+  desc "Truncate all existing data"
+  task :truncate => :environment do
+    options = {}
+    tables  = ENV['TABLES'].present? ? ENV['TABLES'].split(",").map(&:squish) : nil
+    options[:only] = tables if tables
 
-		DatabaseCleaner.clean_with :truncation, options
-	end
+    DatabaseCleaner.clean_with :truncation, options
+  end
 
 end
 
 namespace :deploy do
 
-	DEPLOY_ENVIRONMENTS = [:staging, :production]
+  DEPLOY_ENVIRONMENTS = [:staging, :production]
 
-	DEPLOY_ENVIRONMENTS.each do |environment|
-		namespace environment do
-			task :migrations do
-				deployer = RakeHerokuDeployer.new(environment)
-				deployer.run_migrations
-			end
+  DEPLOY_ENVIRONMENTS.each do |environment|
+    namespace environment do
+      task :migrations do
+        deployer = RakeHerokuDeployer.new(environment)
+        deployer.run_migrations
+      end
 
-			task :rollback do
-				deployer = RakeHerokuDeployer.new(environment)
-				deployer.rollback
-			end
-		end
+      task :rollback do
+        deployer = RakeHerokuDeployer.new(environment)
+        deployer.rollback
+      end
+    end
 
-		task environment do
-			deployer = RakeHerokuDeployer.new(environment)
-			deployer.deploy
-		end
-	end
+    task environment do
+      deployer = RakeHerokuDeployer.new(environment)
+      deployer.deploy
+    end
+  end
 
-	task :all do
-		DEPLOY_ENVIRONMENTS.each {|env| Rake::Task["deploy:#{env}"].invoke }
-	end
+  task :all do
+    DEPLOY_ENVIRONMENTS.each {|env| Rake::Task["deploy:#{env}"].invoke }
+  end
 end
 
 namespace :api do
@@ -95,6 +95,13 @@ namespace :project do
     ::STATS_DIRECTORIES << ["Specs", "spec/"]
 
     CodeStatistics::TEST_TYPES << "Services specs"
+  end
+end
+
+namespace :generate do
+
+  desc "Create an endpoint"
+  task :endpoint do
   end
 end
 

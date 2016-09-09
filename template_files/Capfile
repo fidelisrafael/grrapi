@@ -21,7 +21,6 @@ require 'capistrano/ssh_doctor'
 # require 'capistrano/hostmenu'
 
 require 'capistrano/rails/console'
-require 'capistrano/rails_tail_log'
 require 'capistrano/rails/collection'
 
 require 'airbrussh/capistrano'

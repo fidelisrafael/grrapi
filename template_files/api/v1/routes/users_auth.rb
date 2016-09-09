@@ -28,20 +28,6 @@ module API
               user_success_response_for_service(auth_token_validate_service)
             end
 
-            desc 'Try to authenticate user using social provider (Current only supports Facebook and Google+)'
-            params do
-              requires :access_token, type: String
-            end
-            post ':oauth_provider' do
-              service = execute_service('Users::ProviderAuthService',
-                params.delete(:access_token),
-                params.delete(:oauth_provider),
-                params
-              )
-
-              user_provider_auth_response(service)
-            end
-
             desc 'Clear user authorizations for token provider'
             delete  do
               authenticate_user
@@ -99,7 +85,7 @@ module API
           params do
             requires :token, type: String, allow_blank: false
           end
-          post :activate_account do
+          post '/activate_account/:token' do
             user = User.not_activated.find_by(activation_token: params[:token])
 
             service = execute_service('Users::ActivateAccountService', user, user, params)

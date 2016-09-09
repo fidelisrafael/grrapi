@@ -2,31 +2,25 @@ module Services
   module V1
     class Auth::TokenValidateService < Auth::CreateService
 
-      def initialize(token, provider, options={})
-        super(nil, nil, options)
+      def initialize(token, provider, options = {})
+        super(nil, nil, nil, options)
         @token = token
         @provider = provider.to_s.downcase
       end
 
       def execute
-        if valid_provider?
-
+        execute_action do
           @auth_token = find_auth_token(@token, @provider)
 
           if valid_auth_token?(@auth_token)
-            if @auth_token.valid_access?
-              success_response
-            else
-              @auth_token.delete
-            end
+             success_response
           else
-            not_authorized_error(%s(auth.invalid_auth_token))
-          end
-        else
-          invalid_provider_response!
-        end
+            # in case of token exists in database but is expired
+            @auth_token.delete if @auth_token
 
-        success?
+            not_authorized_error!(%s(auth.invalid_auth_token))
+          end
+        end
       end
 
       private
@@ -35,10 +29,10 @@ module Services
       end
 
       def valid_auth_token?(auth_token)
-        auth_token.present?
+        auth_token.present? && auth_token.valid_access?
       end
 
-      def after_success
+      def execute_after_success_actions
         fetch_user_from_auth_token
         update_auth_token_expiration
       end

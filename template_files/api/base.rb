@@ -1,6 +1,9 @@
 module API
   class Base < Grape::API
 
+    include API::Helpers::CacheDSL
+
+    helpers API::Helpers::CacheHelpers
     helpers API::Helpers::ApplicationHelpers
     helpers API::Helpers::AuthHelpers
 

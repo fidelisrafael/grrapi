@@ -1,0 +1,34 @@
+default: &default
+  states:
+    show:
+      key: 'state_id_%s'
+      expires: <%= 1.hour %>
+    all:
+      key: 'states_all'
+      expires: <%= 1.hour %>
+    cities:
+      key: 'state_id_%s_cities'
+      expires: <%= 1.hour %>
+
+  current_user:
+    show:
+      key: 'current_user_%s_show'
+      expires: <%= 1.hour %>
+    preferences:
+      key: 'current_user_%s_preferences'
+      expires: <%= 1.hour %>
+    notifications:
+      key: 'current_user_%s_notifications'
+      expires: <%= 1.hour %>
+    paginated_notifications:
+      key: 'current_user_%s_notifications_page_%s_per_page_%s'
+      expires: <%= 1.hour %>
+
+development:
+  <<: *default
+
+staging:
+  <<: *default
+
+production:
+  <<: *default

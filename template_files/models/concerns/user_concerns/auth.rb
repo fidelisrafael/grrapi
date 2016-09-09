@@ -8,6 +8,8 @@ module UserConcerns
     MAX_ALLOWED_LOGIN_ATTEMPTS    = (Application::Config.max_allowed_login_attempts || 5).to_i
     LOGIN_BLOCK_INTERVAL_FROM_NOW = (Application::Config.login_block_period || 1.day).to_i
 
+    ALLOWED_AUTH_ATTRIBUTES = [:email]
+
     included do
       has_secure_password
 
@@ -19,19 +21,43 @@ module UserConcerns
       # validate password for new user or revalidate password if changed
       validates :password, :password_confirmation, presence: true,
                 :length => { :minimum => 5 },
-                :format => { with: PASSWORD_REGEXP },
+                # :format => { with: PASSWORD_REGEXP },
                 :if => :needs_password_validation?
 
       validates :password, confirmation: true, if: :needs_password_validation?
 
+      validates :tof_accepted_at, presence: true, on: [:create]
+
       before_save :generate_activation_token
 
-      def self.authenticate(email, password)
-        return false unless email && password
+      before_create :set_tof_defaults
 
-        user = User.find_by(email: email)
+      after_initialize :set_tof_defaults
+
+      def self.authenticate_by_email(email, password)
+        self.authenticate_by(:email, email, password)
+      end
+
+      def self.authenticate_by(attribute, attribute_value, password)
+        return false unless attribute_value && password
+
+        unless ALLOWED_AUTH_ATTRIBUTES.member?(attribute.to_sym)
+          raise "Not allowed authentication attribute, valids are: #{ALLOWED_AUTH_ATTRIBUTES.join(', ')}"
+        end
+
+        user = User.find_by(attribute => attribute_value)
         user.try(:authenticate, password)
       end
+
+      def supergroup?
+        admin? || staff?
+      end
+
+      def admin_allowed?
+        supergroup?
+      end
+
+      alias_method :superuser?, :supergroup?
 
       def activate_account!
         return true if self.account_activated?
@@ -51,10 +77,8 @@ module UserConcerns
         !account_activated?
       end
 
-      def send_account_activation_mail!
-        UsersMailer.activate_account(self).deliver
-
-        self.update_attribute(:activation_sent_at, Time.zone.now)
+      def update_activation_sent_at(time = nil)
+        self.update_attribute(:activation_sent_at, time || Time.zone.now)
       end
 
       def from_oauth?
@@ -64,26 +88,26 @@ module UserConcerns
       def first_login_on_provider?(provider)
         return false unless account_activated?
 
-        set_login_status(provider)
+        set_login_status_historic(provider)
 
-        self.login_status[provider.to_s].to_i == 1
+        self.login_status_historic[provider.to_s].to_i == 1
       end
 
       def update_login_count_from_provider!(provider)
         return false unless account_activated?
 
-        set_login_status(provider)
+        set_login_status_historic(provider)
 
-        self.login_status[provider.to_s] += 1
+        self.login_status_historic[provider.to_s] += 1
 
-        self.update_attribute(:login_status, self.login_status)
+        self.update_attribute(:login_status_historic, self.login_status_historic)
       end
 
-      def set_login_status(provider)
-        self.login_status ||= Hash.new { 0 }
-        self.login_status[provider.to_s] ||= 0
+      def set_login_status_historic(provider)
+        self.login_status_historic ||= Hash.new { 0 }
+        self.login_status_historic[provider.to_s] ||= 0
 
-        self.login_status
+        self.login_status_historic
       end
 
       def reset_password!
@@ -145,12 +169,30 @@ module UserConcerns
 
         begin
           self.activation_token = SecureRandom.hex
-        end while self.class.exists?(activation_token: activation_token)
+        end while self.class.with_deleted.exists?(activation_token: activation_token)
 
         nil
       end
 
+      def tof_accepted?
+        self.tof_accepted_at.present?
+      end
+      alias :tof_accepted :tof_accepted?
+      alias :terms_of_use_accepted? :tof_accepted?
+
+      def tof_accepted=(value)
+        self.tof_accepted_at ||= Time.zone.now if value_to_boolean(value)
+      end
+
       private
+      def value_to_boolean(value)
+        ['true', true].include?(value)
+      end
+
+      def set_tof_defaults
+        self.tof_accepted_at ||= Time.zone.now if self.new_record?
+      end
+
       def login_block_enabled?
         Application::Config.enabled?(:enable_max_login_attempts_block)
       end

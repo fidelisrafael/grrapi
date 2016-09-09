@@ -1,7 +1,9 @@
 module Services
   module V1
     module Auth
-      class PasswordUpdateService < BaseService
+      class PasswordUpdateService < BaseActionService
+
+        action_name :update_password
 
         attr_reader :user
 
@@ -12,23 +14,18 @@ module Services
           @user = user
         end
 
-        def execute
-          if can_execute_action?
-            if @user.update_password(new_password_value)
-              success_response
-            else
-              unprocessable_entity_error(@user.errors)
-            end
+        private
+        def execute_service_action
+          unless @user.update_password(new_password_value)
+            unprocessable_entity_error(@user.errors)
           end
         end
-
-        private
 
         def new_password_value
           @options[:password]
         end
 
-        def can_execute_action?
+        def user_can_execute_action?
           unless valid_token?
             return not_found_error!(%s(users.invalid_password_update_token))
           end
@@ -63,7 +60,9 @@ module Services
         end
 
         def notify_users
-          delivery_async_email(UsersMailer, :password_updated, @user)
+          delivery_async_email(UsersMailer, :password_updated, user_id: @user.id)
+          send_push_notification_sync(@user, :password_updated)
+          create_system_notification_async(@user, :password_updated, @user)
         end
 
         def reset_password_token

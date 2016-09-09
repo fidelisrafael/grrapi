@@ -1,0 +1,5 @@
+"pt-BR":
+  notifications:
+    welcome: "Olá %{receiver_user_name}, seu cadastro foi efetuado com sucesso. Verifique seu email para confirmar sua conta!"
+    account_confirmated: "Olá %{receiver_user_name} sua conta foi confirmada com sucesso!"
+    password_updated: "Sua senha de acesso foi atualizada com sucesso. (Você será deslogado de todos os dispositivos)."

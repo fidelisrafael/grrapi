@@ -1,7 +1,11 @@
 default: &default
-  default_locale: 'en'
+  default_locale: 'pt-BR'
 
-  authentication_providers: '["faker", "ios", "android", "web", "postman"]' # must be a valid JSON
+  # This key is used to allow admin authorization when creating records
+  # eg: New admin/staff/merchant user
+  master_api_key: "9e8de8a8ffc47af2cc41efdb7d33434f"
+
+  authentication_providers: '["faker", "ios", "android", "web", "postman", "admin"]' # must be a valid JSON
   authentication_token_expiration_seconds: '432000' # 5.days
   force_account_activation_to_enable_login: 'true'
 
@@ -26,40 +30,38 @@ default: &default
   seconds_to_wait_between_account_activation_mail_resend: '120' # 2 minutes
 
   account_confirmation_url_format: "%{site_url}/%{slug}/%{token}"
-  account_confirmation_url_site_url: "http://localhost:8080"
+  account_confirmation_url_site_url: "http://localhost:3001"
   account_confirmation_url_site_slug: "confirmar-conta"
 
   password_update_url_format: "%{site_url}/%{slug}/%{token}"
-  password_update_url_site_url: "http://localhost:8080"
-  password_update_url_site_slug: "confirmar-conta"
+  password_update_url_site_url: "http://localhost:3001"
+  password_update_url_site_slug: "resetar-senha"
 
   development_api_host: "http://localhost:8080/api/"
-  staging_api_host: "api-staging.myapp.mytld"
-  production_api_host: "api.myapp.mytld"
+  staging_api_host: "api-staging.myapiproject.com"
+  production_api_host: "api.myapiproject.com"
 
   # front-end site hosts (used to generate mailer links)
   host: "localhost:9090"
   site_url:  "http://localhost:8080" # used in mail to generate links
+  admin_url:  "http://localhost:4000" # used in mail to generate links
   site_host: "localhost:9090"
 
-  admin_email: "admin@myapp.mytld"
-  contact_email: "contact@myapp.mytld"
+  admin_email: "admin_user@myapiproject.com"
+  from_contact_email: "contato@myapiproject.com"
 
-  admin_user_email: "admin_user@myapp.mytld"
-  system_user_email: "system_user_%s@myapp.mytld"
+  admin_user_email: "admin_user@myapiproject.com"
+  system_user_email: "system_user_%s@myapiproject.com"
 
-  # enable this to overwrite all cache configuration across app
-  # reminder: if you need cache for some endpoints, take a loke
-  # in application_helpers.rb for methods: `with_cacheable_endpoints` & `respond_with_cacheable`
-  # who provides out of box a cached url for resources. ex:
-  # /api/v1/users
-  # /api/v1/cached/users
-
-  cache_enabled: "false"
-  send_email_async: "false"
+  send_email_async: "true"
   create_origin_for_records: "true"
+  create_origins_async: "true"
+  create_system_notification_async: "true"
+  save_user_device_async: "true" # temp
+  update_user_after_signup_async: "true"
+  send_push_notifications_async: "true"
 
-  session_duration: "2592000"
+  session_duration: "2592000" # 1 mês
 
   # Use this to determine CORS configuration
   access_control_allowed_origins: "*"
@@ -73,18 +75,148 @@ default: &default
   # eg: /api/users/1
   api_prefix_path: 'api'
 
+  sidekiq_username: "sidekiq-admin"
+  sidekiq_password: "S*x.DaSRe**.@?W+76G~vy"
+
+  redis_url: "redis://127.0.0.1:6379/1"
+  redis_sidekiq_namespace: 'development-sidekiq'
+
+  # timeout when requesting cnpj data on external API
+  zipcode_fetch_remote_api_timeout_seconds: '10'
+
+  from_contact_email: "contato@myapiproject.com"
+
+  # see config/initializer/cache.rb to better understand configs below
+  cache_servers: 'localhost:11211'
+
+  # if cache server needs authentication
+  cache_username: ''
+  cache_password: ''
+
+  cache_namespace: 'app-cache'
+
+  # max block size
+  cache_value_max_bytes: "<%= (1024 * 1024) * 5 %>" # 5 MB
+
+  # timeout when reading/writing to cache client
+  cache_socket_timeout: "1.5"
+
+  cache_socket_failure_delay: "0.2"
+
+  # For now the only utility for this option is to auto discover cache nodes
+  # in case you're using AWS elastic_cache or similar service
+  cache_service: 'memcachier'
+
+  cache_auto_discover_nodes: 'false' # turn this to true if cache_service = 'elastic_cache'
+
+  # enable this to overwrite all cache configuration across app
+  # reminder: if you need cache for some endpoints, take a loke
+  # in application_helpers.rb for methods: `with_cacheable_endpoints` & `respond_with_cacheable`
+  # who provides out of box a cached url for resources. ex:
+  # /api/v1/users
+  # /api/v1/cached/users
+
+  global_cache_enabled: "false"
+
+  # slug used to isolated cache versions of endpoints
+  # if cache_slug_namespace has the value 'cached', cached urls will be:
+  # /api/:version/cached/:endpoint
+  # eg:
+  # /api/v1/categories # normal version, without cache
+  # /api/v1/cached/categories # cache version
+
+  cache_slug_namespace: 'cached'
+
+  # if this is actived, cache client(eg: memcached) will store ONE key by user
+  # this key is used to save all active keys of user in cache client
+  # this way is simplier & very easy to deleted keys based in a regexp pattern
+  save_user_cache_keys: "true"
+
+  # turn this true to encode user related cache keys data as Base64 in cache client(eg: MemCached)
+  # remember to flush all (Application.cache_client.clear) all cache when changing this value
+  encode_user_cache_keys: "true"
+
+  # see avaliable encoders in simplified_cache/key_encoders folder (gem: simplified_cache)
+  # current: ['', 'default', 'base64', 'marshal']
+  # ATTENTION: Remember who changing this will change the way data is stored in cache client(eg: MemCached).
+  # Only use a custom value(besides default) if you need to encode(in a very simple way) this data.
+  encode_user_cache_keys_method: "default"
+
+  validate_user_address_on_signup: 'true'
+
+  aws_access_key_id: ""
+  aws_secret_access_key: ""
+  aws_bucket_name: "app-assets-development"
+  aws_cache_max_age: "31536000"
+  aws_region: "sa-east-1"
+  aws_use_ssl: "true"
+
+  upload_to_s3_in_development: "true"
+  process_image_upload_in_background: "false"
+  process_avatar_upload_in_background: "false"
+  compress_images_on_upload: "true"
+
+  parse_app_id: ""
+  parse_api_key: ""
+  parse_master_key: ""
+
+  optimize_png_using_pngquant: "true"
+
 development:
   <<: *default
 
 test:
   <<: *default
+  redis_sidekiq_namespace: 'test-sidekiq'
 
 staging:
   <<: *default
-  site_host: "staging.myapp.mytld"
-  host: "api-staging.myapp.mytld"
+  aws_bucket_name: "app-assets-stg"
+  aws_access_key_id: ""
+  aws_secret_access_key: ""
+
+  # Will be the final config
+  smtp_username: ""
+  smtp_password: ""
+  smtp_host: ""
+  smtp_port: ""
+  smtp_domain: "myapiproject.com"
+
+  site_host: "staging.myapiproject.com"
+  host: "api-staging.myapiproject.com"
+  redis_sidekiq_namespace: 'staging-sidekiq'
+  admin_url:  "http://admin-staging.myapiproject.com"
+
+  account_confirmation_url_site_url: "http://web-staging.myapiproject.com"
+  password_update_url_site_url: "http://web-staging.myapiproject.com"
+  prefix_api_path: "false"
+
+  from_contact_email: "rafa_fidelis@yahoo.com.br"
 
 production:
   <<: *default
-  site_host: "myapp.mytld"
-  host: "api.myapp.mytld"
+  aws_bucket_name: "app-assets-production"
+  aws_access_key_id: ""
+  aws_secret_access_key: ""
+
+  smtp_username: ""
+  smtp_password: ""
+  smtp_host: ""
+  smtp_port: ""
+  smtp_domain: "myapiproject.com"
+
+  site_host: "myapiproject.com"
+  host: "api.myapiproject.com"
+  redis_sidekiq_namespace: 'production-sidekiq'
+  admin_url:  "http://admin.myapiproject.com"
+
+  account_confirmation_url_site_url: "http://web.myapiproject.com"
+  password_update_url_site_url: "http://web.myapiproject.com"
+  prefix_api_path: "false"
+  from_contact_email: "contato@myapiproject.com"
+
+  parse_app_id: ""
+  parse_api_key: ""
+  parse_master_key: ""
+
+  redis_url: ""

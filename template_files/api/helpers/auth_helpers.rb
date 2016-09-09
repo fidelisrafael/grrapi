@@ -23,8 +23,12 @@ module API
         end
       end
 
-      def auth_email_param
-        params.delete(:email)
+      def auth_attribute
+        return :email
+      end
+
+      def auth_attribute_value
+        params.fetch(auth_attribute, nil)
       end
 
       def auth_password_param
@@ -36,11 +40,7 @@ module API
       end
 
       def token_authentication_error_response
-        {
-          error: true,
-          status_code: auth_token_validate_service.response_status,
-          errors: auth_token_validate_service.errors
-        }
+        error_response_for_service(auth_token_validate_service)
       end
 
       def current_user
@@ -54,7 +54,8 @@ module API
 
       def authentication_service
         @authentication_service ||= initialize_service(authentication_create_service_name,
-          auth_email_param,    # from params
+          auth_attribute,
+          auth_attribute_value,    # from params
           auth_password_param, # from params
           auth_params          # options
         )

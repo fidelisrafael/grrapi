@@ -1,4 +1,4 @@
-require 'simple_services'
+require 'nifty_services'
 
 module API
   module Helpers
@@ -13,8 +13,6 @@ module API
       CURRENT_LOCALE_HTTP_PARAM  = Application::Config.current_locale_http_param
 
       DEFAULT_LOCALE = (ENV['LOCALE'] || Application::Config.default_locale || 'en').to_sym
-
-      ALLOWED_PAGINATION_PER_PAGE = (1..10).map { |value| value * 10 }
 
       def serializer(serializer)
         serializer_by_key_name(serializer).constantize
@@ -86,7 +84,10 @@ module API
       end
 
       def locale_from_request
-        params[CURRENT_LOCALE_HTTP_PARAM] || headers[CURRENT_LOCALE_HTTP_HEADER]
+        return params[CURRENT_LOCALE_HTTP_PARAM] if params
+        return headers[CURRENT_LOCALE_HTTP_HEADER] if headers
+
+        return DEFAULT_LOCALE
       end
 
       def current_locale

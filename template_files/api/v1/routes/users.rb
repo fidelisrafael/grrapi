@@ -15,6 +15,19 @@ module API
               requires :email, type: String, regexp: User::EMAIL_REGEXP
               requires :password, type: String, regexp: User::PASSWORD_REGEXP
               requires :password_confirmation, type: String, regexp: User::PASSWORD_REGEXP
+
+              optional :address, type: Hash do
+                requires :street, type: String
+                requires :zipcode, type: String
+                requires :number, type: String
+                requires :city_id, type: Integer
+              end
+
+              optional :device, type: Hash do
+                requires :installation_id, type: String
+                requires :token, type: String
+                requires :platform, type: String, values: ::UserDevice::VALID_PLATFORMS.values
+              end
             end
 
             requires :auth_provider, values: Authorization::PROVIDERS.map(&:to_s)
@@ -22,25 +35,18 @@ module API
 
           post do
             service = execute_service('Users::CreateService', params)
-
-            if service.success?
-              response = success_response_for_auth_service(service)
-            else
-              status service.response_status
-              response = error_response_for_service(service)
-            end
-
-            response
+            user_provider_auth_response(service, serializer: 'Auth::UserCreateService')
           end
 
           desc 'Check if user with given mail exists'
           params do
             requires :email, type: String, regexp: User::EMAIL_REGEXP
           end
-
           get :check_email do
             u = User.find_by(email: params[:email].squish)
+
             response_status = u.present? ? 200 : 404
+
             status response_status
 
             {

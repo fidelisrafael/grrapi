@@ -1,33 +1,31 @@
 module Services
   module V1
     module Auth
-      class PasswordRecoveryService < BaseService
+      class PasswordRecoveryService < BaseActionService
 
         attr_reader :user
 
-        RESET_PASSWORD_UPDATE_PERIOD = 1.minute
+        action_name :recovery_password
 
-        def initialize(user, options={})
+        RESET_PASSWORD_UPDATE_PERIOD = 5.minute
+
+        def initialize(user, options = {})
           super(options)
           @user = user
         end
 
-        def execute
-          if can_execute_action?
-            if @user.reset_password!
-              success_response
-            end
-          end
+        private
+        def execute_service_action
+          @user.reset_password!
         end
 
-        private
-        def can_execute_action?
+        def user_can_execute_action?
           unless valid_user?
             return not_found_error!(%s(users.not_found))
           end
 
           unless can_request_reset_password?
-            remaining_time = remaining_time_for_new_request
+            remaining_time = remaining_time_for_new_request.next # + 1 minute
             return forbidden_error!(%s(users.cant_send_password_reset_request), remaining_time: remaining_time)
           end
 
@@ -52,7 +50,7 @@ module Services
         end
 
         def notify_users
-          delivery_async_email(UsersMailer, :password_recovery, @user)
+          delivery_async_email(UsersMailer, :password_recovery, user_id: @user.id)
         end
       end
     end
