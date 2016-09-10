@@ -64,7 +64,7 @@ module Services
 
           return false if superuser_creation?
 
-          (@temp_record || @record).address.blank?
+          return (address_params.present? && (@temp_record || @record).address.blank?)
         end
 
         def async?

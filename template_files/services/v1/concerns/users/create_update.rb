@@ -8,6 +8,7 @@ module Services::V1::Concerns
         :name,
         :first_name,
         :last_name,
+        :username,
         :email,
         :password,
         :password_confirmation,
