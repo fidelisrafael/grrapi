@@ -4,6 +4,7 @@ module UserNamed
 
   included do
     before_save :set_username
+    before_save :normalize_username_before_save
   end
 
   def fullname
@@ -11,6 +12,10 @@ module UserNamed
   end
 
   private
+  def normalize_username_before_save
+    self.username = normalize_username(self.username)
+  end
+
   def set_username
     return true if self.username.present? && self.persisted?
 

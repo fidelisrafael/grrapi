@@ -11,7 +11,8 @@ module Services::V1::Concerns
         :email,
         :password,
         :password_confirmation,
-        :tof_accepted
+        :tof_accepted,
+        :profile_image
       ]
 
       ADDRESS_WHITELIST_ATTRIBUTES = [
@@ -24,6 +25,8 @@ module Services::V1::Concerns
       ]
 
       DEFAULT_PROVIDER = :web
+
+      DEFAULT_PROFILE_TYPE = :common_user
 
       included do
         def record_attributes_whitelist
@@ -97,8 +100,12 @@ module Services::V1::Concerns
           return true
         end
 
+        def current_profile_type
+          (attributes_hash[:profile_type] || DEFAULT_PROFILE_TYPE).to_sym
+        end
+
         def superuser_creation?
-          [:staff, :admin].member?(attributes_hash[:profile_type].to_sym)
+          [:staff, :admin].member?(current_profile_type)
         end
 
         def backstage_user_creation?

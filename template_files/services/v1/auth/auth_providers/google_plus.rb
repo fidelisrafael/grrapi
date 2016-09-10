@@ -33,17 +33,18 @@ module Services
 
           private
           def normalized_user_data_from_provider(provider_data)
-            email = provider_data['email'] ||
-                    provider_data['emails'] && provider_data['emails'].first.try(:[],'value')
-            name_data = provider_data['name']
+            pd = provider_data
+
+            email = pd['email'] || pd['emails'] && pd['emails'].first.try(:[],'value')
+            name_data = pd['name']
             first_name, last_name = name_data['givenName'], name_data['familyName']
+
+            age_range = pd['ageRange'] ? pd['ageRange']['max'] || pd['ageRange']['min'] : nil
 
             user_data = provider_data
                         .slice(*PROVIDER_ATTRIBUTES.map(&:to_s))
                         .merge(email: email, first_name: first_name, last_name: last_name)
-
-
-            # user_data[:gender] ||= ::User::VALID_GENDERS[:male] # default to avoid errors
+                        # .merge(age: age_range)
 
             base_user_data.merge(user_data)
           end

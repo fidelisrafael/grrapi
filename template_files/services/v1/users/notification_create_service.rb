@@ -7,7 +7,7 @@ module Services
 
         private
         def user_can_create_record?
-          true
+          @user.present?
         end
 
         def build_record_scope

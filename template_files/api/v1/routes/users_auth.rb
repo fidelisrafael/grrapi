@@ -11,8 +11,11 @@ module API
             desc 'Authenticate an user using email and password'
             params do
               requires :auth_provider, type: String
-              requires :email   , type: String
               requires :password, type: String
+
+              optional :email, type: String
+              optional :username, type: String
+              mutually_exclusive :email, :username
             end
             post do
               service = authentication_service
@@ -25,7 +28,7 @@ module API
             post :token do
               authenticate_user
 
-              user_success_response_for_service(auth_token_validate_service)
+              success_response_for_auth_service(auth_token_validate_service)
             end
 
             desc 'Clear user authorizations for token provider'

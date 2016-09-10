@@ -24,7 +24,7 @@ module Services
 
         def notify_user
           send_push_notification_async(@user, :account_confirmated)
-          create_system_notification_async(@user, :account_confirmated, @user)
+          create_system_notification_async(@user, :account_confirmated, @user, @options)
         end
 
         private

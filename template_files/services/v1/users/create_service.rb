@@ -45,8 +45,18 @@ module Services
         end
 
         def after_success_actions
+          activate_account
           create_authorization
           execute_async_actions
+        end
+
+        def activate_account
+          # if application config only allow activated users to login
+          return nil if Application::Config.enabled?(:force_account_activation_to_enable_login)
+
+          # if activation to login is disabled, confirm user account to avoid
+          # problems when turning config enabled in future (old users will not be able to login)
+          @record.activate_account!
         end
 
         def create_address?

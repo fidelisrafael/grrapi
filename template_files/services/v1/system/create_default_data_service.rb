@@ -131,7 +131,7 @@ module Services
 
         collection.each_with_index do |data, index|
           childrens = data.delete('childrens')
-          record = klass.find_or_create_by(data.slice(*attributes))
+          record = klass.find_or_create_by(data.slice(*attributes.map(&:to_s)))
 
           if record.persisted?
             if childrens.present? && childrens.any?

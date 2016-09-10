@@ -39,28 +39,38 @@ module Services
             :fb_error_code
           end
 
-          def provider_request_url(access_token, uuid = 'me', params = 'name, first_name, last_name, email')
+          def provider_request_url(access_token, uuid = 'me', params = 'name, first_name, last_name, email, birthday')
             PROVIDER_REQUEST_URL % [uuid, params, access_token]
           end
 
           def normalized_user_data_from_provider(provider_data)
+            birthday = birthday_date_from_facebook(provider_data['birthday'])
+
             user_data = provider_data
                         .slice(*PROVIDER_ATTRIBUTES.map(&:to_s))
-                        # .merge(birthday_date: birthday_date_from_facebook(provider_data['birthday']))
+                        # .merge(age: calculate_age_from_birthday(birthday))
 
             base_user_data.merge(user_data)
+          end
+
+          def calculate_age_from_birthday(birthday)
+            return nil if birthday.blank?
+
+            current = Date.today
+
+            # if user birthday yet NOT was happened this year
+            # remove -1 from calc
+            (current.year - birthday.year) + (
+              (current.month >= birthday.month && current.day >= birthday.day) ? 0 : -1)
           end
 
           # facebook returns the date in a difficult way to parse
           def birthday_date_from_facebook(birthday)
             return Date.today if birthday.blank?
 
-            date = begin
-              Date.parse(birthday)
-            rescue => e
-              date = birthday.to_s.gsub(/(\d{2})\/(\d{2})\/(\d{4})/, '\\2/\\1/\\3') rescue Date.today
-              Date.parse(date)
-            end
+            date = birthday.to_s.gsub(/(\d{2})\/(\d{2})\/(\d{4})/, '\\2/\\1/\\3')
+
+            Date.parse(date) rescue Date.yesterday
           end
         end
       end

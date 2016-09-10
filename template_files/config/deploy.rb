@@ -158,6 +158,7 @@ namespace :deploy do
   before :starting,  :upload_yml
   after  :finishing, :cleanup
   after  :published, :restart
+  after  :restart, 'sidekiq:restart'
 end
 
 namespace :puma do

@@ -8,7 +8,7 @@ module UserConcerns
     MAX_ALLOWED_LOGIN_ATTEMPTS    = (Application::Config.max_allowed_login_attempts || 5).to_i
     LOGIN_BLOCK_INTERVAL_FROM_NOW = (Application::Config.login_block_period || 1.day).to_i
 
-    ALLOWED_AUTH_ATTRIBUTES = [:email]
+    ALLOWED_AUTH_ATTRIBUTES = [:email, :username]
 
     included do
       has_secure_password
@@ -36,6 +36,10 @@ module UserConcerns
 
       def self.authenticate_by_email(email, password)
         self.authenticate_by(:email, email, password)
+      end
+
+      def self.authenticate_by_username(username, password)
+        self.authenticate_by(:username, username, password)
       end
 
       def self.authenticate_by(attribute, attribute_value, password)

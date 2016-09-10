@@ -10,6 +10,11 @@ default: &default
       key: 'state_id_%s_cities'
       expires: <%= 1.hour %>
 
+  cities:
+    show:
+      key: 'city_id_%s'
+      expires: <%= 1.day %>
+
   current_user:
     show:
       key: 'current_user_%s_show'

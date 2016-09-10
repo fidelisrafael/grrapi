@@ -142,7 +142,7 @@ default: &default
   # Only use a custom value(besides default) if you need to encode(in a very simple way) this data.
   encode_user_cache_keys_method: "default"
 
-  validate_user_address_on_signup: 'true'
+  validate_user_address_on_signup: 'false'
 
   aws_access_key_id: ""
   aws_secret_access_key: ""

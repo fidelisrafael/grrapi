@@ -3,6 +3,7 @@ module API
     class Base < API::Base
       include Grape::Kaminari
 
+      helpers API::Helpers::V1::PaginateHelpers
       helpers API::Helpers::V1::ApplicationHelpers
       helpers API::Helpers::V1::AuthHelpers
 
@@ -14,6 +15,9 @@ module API
         hide_documentation_path: true,
         api_version: 'v1'
       )
+
+      mount V1::Routes::Cities
+      mount V1::Routes::States
 
       mount V1::Routes::Users
       mount V1::Routes::UsersAuth

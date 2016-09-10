@@ -32,7 +32,9 @@ module Services
       end
 
       def account_activated?
-        @user.try(:account_activated?)
+        return true if Application::Config.disabled?(:force_account_activation_to_enable_login)
+
+        return @user.try(:account_activated?)
       end
 
       def new_user?
@@ -130,7 +132,7 @@ module Services
       def can_create_authorization?
         return false unless @user
 
-        @user.account_activated?
+        account_activated?
       end
 
       def validate_allowed_auth_attribute!

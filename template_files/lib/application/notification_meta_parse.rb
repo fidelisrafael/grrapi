@@ -16,10 +16,6 @@ module Application
         sender_user_name: sender_user.try(:name)
       }.merge(options[:notification_data] || {})
 
-      if @notificable.is_a?(Order)
-        notification_meta[:order_ref] = @notificable.ref
-      end
-
       notification_meta
     end
   end

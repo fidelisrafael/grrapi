@@ -2,10 +2,13 @@ module Services
   module V1
     class Users::UpdateService < BaseUpdateService
 
+      concern :Users, :CreateUpdate
+
       WHITELIST_ATTRIBUTES = [
         :name,
         :first_name,
         :last_name,
+        :profile_image,
         :password,
         :password_confirmation
       ]

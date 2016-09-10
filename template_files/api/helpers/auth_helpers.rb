@@ -24,7 +24,9 @@ module API
       end
 
       def auth_attribute
-        return :email
+        return :email if params.key?(:email)
+
+        return :username
       end
 
       def auth_attribute_value

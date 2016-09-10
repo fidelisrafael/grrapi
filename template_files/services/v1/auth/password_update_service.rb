@@ -62,7 +62,7 @@ module Services
         def notify_users
           delivery_async_email(UsersMailer, :password_updated, user_id: @user.id)
           send_push_notification_sync(@user, :password_updated)
-          create_system_notification_async(@user, :password_updated, @user)
+          create_system_notification_async(@user, :password_updated, @user. @options)
         end
 
         def reset_password_token
