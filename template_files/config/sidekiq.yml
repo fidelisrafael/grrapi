@@ -1,0 +1,21 @@
+:verbose: true
+:concurrency: <%= ENV['WORKER_CONCURRENCY'] %>
+:queues:
+  - [system_notifications, 10]
+  - [push_notifications, 10]
+  - [mailers, 10]
+  - [parse, 10]
+  - [caches, 10]
+  - [default, 5]
+  - [users, 4]
+  - [origins, 2]
+
+development:
+  :concurrency: 30
+  :logfile: log/sidekiq.log
+
+staging:
+  :concurrency: <%= ENV['WORKER_CONCURRENCY'] || 1 %>
+
+production:
+  :concurrency: <%= ENV['WORKER_CONCURRENCY'] || 1 %>
