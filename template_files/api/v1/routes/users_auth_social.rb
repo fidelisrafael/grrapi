@@ -6,7 +6,7 @@ module API
         helpers API::Helpers::V1::UsersHelpers
 
         namespace :users do
-          namespace :auth do
+          namespace :oauth do
 
             desc 'Try to authenticate user using social provider (Current only supports Facebook and Google+)'
             params do

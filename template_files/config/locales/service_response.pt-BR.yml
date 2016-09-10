@@ -1,6 +1,6 @@
 ---
 'pt-BR':
-  simple_services:
+  nifty_services:
     errors:
       auth:
         invalid_user_credentials: "Login inválido."

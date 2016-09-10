@@ -17,9 +17,9 @@ module API
 
       mount V1::Routes::Users
       mount V1::Routes::UsersAuth
+      mount V1::Routes::UsersAuthSocial
       mount V1::Routes::UsersMe
       mount V1::Routes::UsersMeCacheable
-      mount V1::Routes::UsersAuthSocial
     end
   end
 end

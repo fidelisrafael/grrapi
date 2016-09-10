@@ -34,6 +34,25 @@ module CustomTemplateDSL
   end
 
   def append_content_to_files!
+    inject_config_ru
+    inject_application_rb
+    inject_seeds_rb
+    inject_environments
+  end
+
+  def inject_environments
+    Dir.glob('config/environments/*.rb').each do |file|
+      prepend_to_file file, "require_relative '../config'\n"
+      inject_into_file file, after: "Rails.application.configure do\n" do
+<<-CODE
+  Application::Cache.configure(config)
+  Application::SMTP.configure(config)
+CODE
+      end
+    end
+  end
+
+  def inject_config_ru
     # This file is used by Rack-based servers to start the application.
     append_to_file "config.ru" do
     <<-CODE
@@ -52,7 +71,9 @@ module CustomTemplateDSL
 
     CODE
     end
+  end
 
+  def inject_application_rb
     inject_into_class "config/application.rb", 'Application' do
       <<-CODE
     config.middleware.delete "ActionDispatch::Static"
@@ -85,6 +106,19 @@ module CustomTemplateDSL
   end
 
   def copy_files!
+    copy_directories
+    copy_files
+  end
+
+  def copy_files
+    copy_file_to 'Capfile'
+    copy_file_to 'Procfile'
+    copy_file_to 'contributors.txt'
+    copy_file_to '.rspec'
+    copy_file_to '.editorconfig'
+  end
+
+  def copy_directories
     copy_directory 'api', File.join('app', 'grape', 'api')
 
     copy_directory 'config', 'config'
@@ -105,12 +139,7 @@ module CustomTemplateDSL
 
     copy_directory 'mailers', File.join('app', 'mailers')
     copy_directory 'views', File.join('app', 'views')
-
-    copy_file_to 'Capfile'
-    copy_file_to 'Procfile'
-    copy_file_to 'contributors.txt'
-    copy_file_to '.rspec'
-    copy_file_to '.editorconfig'
+    copy_directory 'uploaders', File.join('app', 'uploaders')
   end
 
   def remove_files!
@@ -131,18 +160,35 @@ module CustomTemplateDSL
   end
 
   def setup_sidekiq_routes
-    inject_into_file "config/routes.rb", after: 'Rails.application.routes.draw do\n' do
+    prepend_to_file 'config/routes.rb' do
       <<-CODE
-      Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-        username == Application::Config.sidekiq_username && password == Application::Config.sidekiq_password
-      end
+  require 'sidekiq/web'
+      CODE
+    end
 
-      mount Sidekiq::Web, at: '/sidekiq'
+    inject_into_file "config/routes.rb", after: "mount API::Base => '/'\n" do
+      <<-CODE
+  Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+    username == Application::Config.sidekiq_username && password == Application::Config.sidekiq_password
+  end
+
+  mount Sidekiq::Web, at: '/sidekiq'
+      CODE
+    end
+  end
+
+  def inject_seeds_rb
+    append_to_file "db/seeds.rb" do
+      <<-CODE
+    actions = ENV['ACTIONS'].present? ? ENV['ACTIONS'].split(',').map(&:squish) : nil
+    Services::V1::System::CreateDefaultDataService.new(actions: actions).execute
       CODE
     end
   end
 
   def setup_gems!
+    gem 'pg'
+
     gem_group :development do
       gem 'brakeman', require: false
       gem 'letter_opener'

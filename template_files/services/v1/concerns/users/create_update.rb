@@ -186,7 +186,7 @@ module Services::V1::Concerns
         end
 
         def master_api_key
-          Application.config.master_api_key
+          Application::Config.master_api_key
         end
 
         def address_city_id

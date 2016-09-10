@@ -12,7 +12,7 @@ module Services
 
         def initialize(access_token, provider, options = {})
           @access_token = access_token
-          @provider     = provider
+          @provider = provider
           super(options)
         end
 
@@ -22,6 +22,18 @@ module Services
         end
 
         private
+        def create_address?
+          false
+        end
+
+        def perform_validations
+          unless valid_authentication_provider?
+            return unprocessable_entity_error!(%s(users.invalid_authentication_provider))
+          end
+
+          return true
+        end
+
         def create_user_from_provider
           @user = @auth_class.fetch_user
 
@@ -57,6 +69,10 @@ module Services
           end
 
           super
+        end
+
+        def superuser_creation?
+          false
         end
 
         def valid_user?

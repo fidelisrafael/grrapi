@@ -94,26 +94,26 @@ module API
         end
 
         def not_found_error_response(message_key = nil)
-          error_response(404, 'not_found', message_key, :grouped_by_type)
+          error_response_for_code(404, 'not_found', message_key, :grouped_by_type)
         end
 
         def bad_request_error_response(message_key = nil)
-          error_response(400, 'bad_request', message_key)
+          error_response_for_code(400, 'bad_request', message_key)
         end
 
         def unprocessable_entity_error_response(message_key = nil)
-          error_response(422, 'unprocessable_entity', message_key)
+          error_response_for_code(422, 'unprocessable_entity', message_key)
         end
 
         def forbidden_error_response(message_key = nil)
-          error_response(403, 'cant_access', message_key)
+          error_response_for_code(403, 'cant_access', message_key)
         end
 
         def internal_server_error_response(message_key = nil)
-          error_response(500, 'internal_error', message_key)
+          error_response_for_code(500, 'internal_error', message_key)
         end
 
-        def error_response(status_code, type, message_key, i18n_type = :by_error_type)
+        def error_response_for_code(status_code, type, message_key, i18n_type = :by_error_type)
           raise 'Invalid message_key for message error' if message_key.blank?
 
           errors = [

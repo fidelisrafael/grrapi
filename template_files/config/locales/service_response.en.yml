@@ -1,6 +1,6 @@
 ---
 en:
-  simple_services:
+  nifty_services:
     errors:
       auth:
         invalid_user_credentials: "Invalid login credentials."

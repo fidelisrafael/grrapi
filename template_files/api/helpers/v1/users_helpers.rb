@@ -2,36 +2,33 @@ module API
   module Helpers
     module V1
       module UsersHelpers
-
-        def user_provider_auth_response(service)
+        def user_provider_auth_response(service, options = {})
           if service.success?
             # success_response_for_auth_service
-            response = success_response_for_auth_service(service, new_user: service.new_user?)
+            response = success_response_for_auth_service(service, { new_user: service.new_user? }, options)
           else
-            status service.response_status
-            response = error_response_for_service(service)
+            response = response_for_create_service(service, :user)
           end
 
           response
         end
 
         def success_response_for_auth_service(service, merge_response = {}, options = {})
-          status service.response_status
-          options = { serializer: %s(Auth::AuthenticationService) }.merge(options)
+          status service.response_status_code
+          options = { serializer: 'Auth::AuthenticationService' }.merge(options)
 
           serializer_response = serialized_object(service, options).as_json
 
-          {
-            success: true,
-            status_code: service.response_status,
-          }.merge(serializer_response).merge(merge_response)
+          response = serializer_response.merge(merge_response)
+
+          success_response_for_service(service).merge(response)
         end
 
         def user_auth_response(service)
           if service.success?
             response = success_response_for_auth_service(service)
           else
-            status service.response_status
+            status service.response_status_code
 
             login_errors = {
               login_blocked: service.login_blocked?,
@@ -54,9 +51,9 @@ module API
           serialized_user(user, options.merge(serializer: :current_user))
         end
 
-        def paginated_notifications_for_user(user, options={})
-          notifications = user.notifications
-          paginate(notifications).includes(:sender_user, :receiver_user, :notificable)
+        def paginated_notifications_for_user(user, options = {})
+          notifications = paginate(user.notifications)
+          notifications.includes(:sender_user, :receiver_user, :notificable)
         end
 
         def paginated_serialized_notifications(notifications, options = {})
