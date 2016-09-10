@@ -204,6 +204,7 @@ module Services
 
   class BaseCreateService < ::NiftyServices::BaseCreateService
     include ServiceExtensions
+    include ::Services::CreateServiceExtensions
   end
 
   class BaseUpdateService < ::NiftyServices::BaseUpdateService
@@ -216,20 +217,13 @@ module Services
 
   class BaseActionService < ::NiftyServices::BaseActionService
     include ServiceExtensions
+    include ::Services::CreateServiceExtensions
   end
 end
 
 
 NiftyServices::BaseCreateService.register_callback(:after_success, :create_origin_for_record) do
   create_origin_async(@record, @options)
-end
-
-class Services::BaseCreateService
-  include ::Services::CreateServiceExtensions
-end
-
-class Services::BaseActionService
-  include ::Services::CreateServiceExtensions
 end
 
 
