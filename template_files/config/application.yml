@@ -31,11 +31,11 @@ default: &default
 
   account_confirmation_url_format: "%{site_url}/%{slug}/%{token}"
   account_confirmation_url_site_url: "http://localhost:3001"
-  account_confirmation_url_site_slug: "confirmar-conta"
+  account_confirmation_url_site_slug: "confirm-account"
 
   password_update_url_format: "%{site_url}/%{slug}/%{token}"
   password_update_url_site_url: "http://localhost:3001"
-  password_update_url_site_slug: "resetar-senha"
+  password_update_url_site_slug: "reset-password"
 
   development_api_host: "http://localhost:8080/api/"
   staging_api_host: "api-staging.myapiproject.com"

@@ -86,7 +86,7 @@ Just by using this template, you can save **weeks of work** from your team, this
 | :x: delete account | hard or soft delete of user data |
 | automated deployment :construction: | for heroku our cloud(such AWS, Digital Ocean) |
 | :vertical_traffic_light: configurable environment | use system environment variables to ocnfigure sensitive application configurations |
-| :computer: front-end client | use this [AngularJS project](#link) as basic starter point for client applications |
+| :computer: front-end client | use this [AngularJS project](https://github.com/fidelisrafael/ruby-api-starter-boilerplate-angularjs-client) as basic starter point for client applications |
 
 Things exposed above are really time taking in most of projects, because almost every product have this same key necessities(eg: configuration, deployment) and features(such login, password management, registration). By using **Ruby API Starter (RAS)** you can save weeks of work with a very well structured base boilerplate for your projects by starting and deploying your application in matter of minutes.
 
@@ -357,7 +357,7 @@ I'm pretty sure you're thinking: "Man, this is perfect, cant be better", but you
 #### Account confirmation and password reset front-end client
 
 As you can see below, you can configure if a user **necessarily needs to confirm their email address** before they can login on  your application - In other words, an email with an URL to confirm account will be delivered to user. Beside this actions, there's endpoints which clients can connect to request a new password mailer delivery, all this mean that you need a **responsive web front-end application** performing HTTP requests to integrate with your API .
-For your happiness, you can have this in seconds, just clone ["AngularJS ruby-api-starter front-end client"]() and follow the README instructions. <br />
+For your happiness, you can have this in seconds, just clone ["AngularJS ruby-api-starter front-end client"](https://github.com/fidelisrafael/ruby-api-starter-boilerplate-angularjs-client) and follow the README instructions. <br />
 
 As you can see in the name of project, this frontend application is developed under **AngularJS**, so it's very easy to get started.
 Just remember to configure the following keys in your `config/application.yml` file for each environment: <br />
