@@ -13,7 +13,7 @@ namespace :db do
 
 end
 
-namespace :heroku
+namespace :heroku do
   namespace :deploy do
 
     DEPLOY_ENVIRONMENTS = [:staging, :production]
