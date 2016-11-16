@@ -84,7 +84,7 @@ Just by using this template, you can save **weeks of work** from your team, this
 | :envelope: forgot password | request password reset e-mail [configurable] |
 | :key: password update | endpoint to update user password (with validations) |
 | :x: delete account | hard or soft delete of user data |
-| automated deployment :construction: | for heroku our cloud(such AWS, Digital Ocean) |
+| :construction: automated deployment | for heroku our cloud(such AWS, Digital Ocean) |
 | :vertical_traffic_light: configurable environment | use system environment variables to ocnfigure sensitive application configurations |
 | :computer: front-end client | use this [AngularJS project](https://github.com/fidelisrafael/ruby-api-starter-boilerplate-angularjs-client) as basic starter point for client applications |
 
@@ -383,14 +383,14 @@ Bellow a simple screenshot of AngularJS application fully integrated with our AP
 
 | screen | success | error |
 |--------|---------|-------|
-|![Password Reset](http://i.imgur.com/tlWNdXy.png) | ![Password successfully updated feedback](http://i.imgur.com/FiNZbk4.png)| ![Password error feedback](http://i.imgur.com/VYZnA6z.png) |
+|![Password Reset](http://i.imgur.com/3LnuqXJ.png) | ![Password successfully updated feedback](http://i.imgur.com/jXvHU4a.png)| ![Password error feedback](http://i.imgur.com/0zgJAYM.png) |
 
 <br />
 ##### Account confirmation integration
 
 | success | success | error |
 |---------|---------|-------|
-|![](http://i.imgur.com/svTmMuE.png) | ![Account confirmation](http://i.imgur.com/A5fTWoE.png)| ![Invalid token](http://i.imgur.com/KOxpY5N.png) |
+|![](http://i.imgur.com/QhXEpE9.png) | ![Account confirmation](http://i.imgur.com/NI6lYg0.png)| ![Invalid token](http://i.imgur.com/0zgJAYM.png) |
 
 ---
 <br />
