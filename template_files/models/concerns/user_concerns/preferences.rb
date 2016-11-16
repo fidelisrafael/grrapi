@@ -9,7 +9,7 @@ module UserConcerns
       after_save  :create_default_preferences
 
       def create_default_preferences(force=false)
-        return false if !force && self.preferences && self.preferences.any?
+        return false if !force && self.preferences && self.preferences.present?
         self.update_attributes(preferences: PREFERENCES_TEMPLATE)
       end
 
