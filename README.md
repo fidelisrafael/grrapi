@@ -1,4 +1,4 @@
-### Ruby API Starter Boilerplate
+# Ruby API Starter Boilerplate
 
 ## About
 
