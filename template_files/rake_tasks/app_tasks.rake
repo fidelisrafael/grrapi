@@ -13,31 +13,33 @@ namespace :db do
 
 end
 
-namespace :deploy do
+namespace :heroku
+  namespace :deploy do
 
-  DEPLOY_ENVIRONMENTS = [:staging, :production]
+    DEPLOY_ENVIRONMENTS = [:staging, :production]
 
-  DEPLOY_ENVIRONMENTS.each do |environment|
-    namespace environment do
-      task :migrations do
-        deployer = RakeHerokuDeployer.new(environment)
-        deployer.run_migrations
+    DEPLOY_ENVIRONMENTS.each do |environment|
+      namespace environment do
+        task :migrations do
+          deployer = RakeHerokuDeployer.new(environment)
+          deployer.run_migrations
+        end
+
+        task :rollback do
+          deployer = RakeHerokuDeployer.new(environment)
+          deployer.rollback
+        end
       end
 
-      task :rollback do
+      task environment do
         deployer = RakeHerokuDeployer.new(environment)
-        deployer.rollback
+        deployer.deploy
       end
     end
 
-    task environment do
-      deployer = RakeHerokuDeployer.new(environment)
-      deployer.deploy
+    task :all do
+      DEPLOY_ENVIRONMENTS.each {|env| Rake::Task["deploy:#{env}"].invoke }
     end
-  end
-
-  task :all do
-    DEPLOY_ENVIRONMENTS.each {|env| Rake::Task["deploy:#{env}"].invoke }
   end
 end
 
@@ -83,12 +85,11 @@ namespace :project do
 
     require 'rails/code_statistics'
 
-    ::STATS_DIRECTORIES << ["Serializers", "app/serializers"]
-    ::STATS_DIRECTORIES << ["Services",    "app/services"]
+    ::STATS_DIRECTORIES << ["Serializers", "lib/serializers"]
+    ::STATS_DIRECTORIES << ["Services",    "lib/services"]
+    ::STATS_DIRECTORIES << ["Workers",     "lib/workers"]
     ::STATS_DIRECTORIES << ["Uploaders",   "app/uploaders"]
-    ::STATS_DIRECTORIES << ["Validators",  "app/validators"]
-    ::STATS_DIRECTORIES << ["Workers",     "app/workers"]
-    ::STATS_DIRECTORIES << ["Grape API",   "app/api"]
+    ::STATS_DIRECTORIES << ["Grape API",   "app/grape"]
     ::STATS_DIRECTORIES << ["Lib",         "lib/"]
 
     # For test folders not defined in CodeStatistics::TEST_TYPES (ie: spec/)
