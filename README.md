@@ -7,7 +7,7 @@ You can learn all the benefits RAS will give to you through this documentation.
 
 To be more cleaner, I was tired of moving along pieces of code through all new API project I started, so I decided to create a **minimal API starter boilerplate** for my projects, and this saved me **A LOT** of time. (And not only time, but wasted time, cuz I will need to develop again e again things that I've implemented before, so it's not super funny time, and this get worse when you don't have such too much time to spend configurating and doing things that you can automatized to get results faster).
 
-##### If you want to see an quickly overview, please refer to [**"1 minute Overview"**](#1-Minute-Overview). 
+##### If you want to see an quickly overview, please refer to [**"1 minute Overview"**](#1-minute-overview). 
 
 ---
 
