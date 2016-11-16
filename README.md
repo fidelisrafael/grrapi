@@ -28,6 +28,7 @@ To be more cleaner, I was tired of moving along pieces of code through all new A
   * [Deployment](#deployment)
 * [How to use](#how-to-use)
   * [Decide your project type](#decide-which-kind-of-project-you-need)
+  * [Clone this repository](#clone-this-repository)
   * [Do the magic!](#init-your-rails-project)
   * [Server Dependencies](#server-dependencies)
 * [What's included in this starter project](#whats-included)
@@ -223,6 +224,17 @@ Everything that existings in **Minimial**, plus:
 
 ---
 
+### Clone this repository 
+
+Now, just clone this repository to an acessible location in your workstation:
+
+```
+git clone git@github.com:fidelisrafael/ruby-api-starter-boilerplate.git
+```
+
+Keep in mind where you downloaded this repository, you will need the path in next step.
+
+
 ### Init your Rails project
 
 After studing your application use cases, you've choosed one the template mode bettween `mininal` and `complete`(the default value), now lets create our Rails application.
@@ -230,7 +242,7 @@ After studing your application use cases, you've choosed one the template mode b
 To use _RAS_, you need to run your Rails project creation the command passing the the template URL option(`-m TEMPLATE_URL`) and `--ras-template-mode="mode"` which will tell the template what kind of setup to do. For example:
 
 ```
-rails new myApiProject -m https://bit.ly/ruby-api-starter --ras-template-mode="complete" --skip-assets --skip-javascript 
+rails new myApiProject -m /path/to/ruby-api-starter-boilerplate/template.rb --ras-template-mode="complete" --skip-assets --skip-javascript 
 ```
 
 For your API projects you must want to skip all `sprockets` handling passing `--skip-assets --skip-javascript` (*)
@@ -238,7 +250,7 @@ For your API projects you must want to skip all `sprockets` handling passing `--
 For Rails 5, you can use `--api` flag:
 
 ```
-rails new myApiProject -m https://bit.ly/ruby-api-starter --api --ras-template-mode="complete"
+rails new myApiProject -m /path/to/ruby-api-starter-boilerplate/template.rb --api --ras-template-mode="complete"
 ```
 
 **OBS**:  RAS(Ruby API Starter) take care of removing  sprockets middlewares from rack stack, this is important because your API must be always fast as possible, and removing this processement from response management is a big win).
