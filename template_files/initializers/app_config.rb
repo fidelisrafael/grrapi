@@ -2,7 +2,7 @@ require 'figaro'
 
 module Application
 
-  CONFIG = Figaro.env
+  CONFIG = Figaro.env unless defined?(CONFIG)
 
   module Config
 
