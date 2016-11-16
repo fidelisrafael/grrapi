@@ -235,7 +235,7 @@ CODE
     gem 'grape-swagger'
     gem 'mini_magick'
     gem 'newrelic_rpm'
-    gem 'nifty_services', '~> 0.0.5', git: 'git@github.com:fidelisrafael/nifty_services.git', branch: 'master'
+    gem 'nifty_services', '~> 0.0.5'
     gem 'paranoia', '~> 2.0.0'
     gem 'parse-ruby-client', git: 'https://github.com/adelevie/parse-ruby-client.git'
     gem 'piet'
