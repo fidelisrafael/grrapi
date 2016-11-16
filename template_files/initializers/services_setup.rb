@@ -205,6 +205,18 @@ module Services
   class BaseCreateService < ::NiftyServices::BaseCreateService
     include ServiceExtensions
     include ::Services::CreateServiceExtensions
+
+    def on_save_record_error(error)
+      options = {}
+
+      # force backtrace to be added in error message
+      if Rails.env.development? || Rails.env.staging?
+        options[:translate] = false
+        error = error.class.new("#{error.message}\n#{error.backtrace}")
+      end
+
+      return unprocessable_entity_error!(error, options)
+    end
   end
 
   class BaseUpdateService < ::NiftyServices::BaseUpdateService
