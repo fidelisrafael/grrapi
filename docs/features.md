@@ -4,7 +4,7 @@
 
 ## Features
 
-Please, refer to ["What's included"](./whats-included.md) for a more deeper overview of features, below only the main points highlighted.
+Please, refer to ["What's included"](./whats_included.md) for a more deeper overview of features, below only the main points highlighted.
 
 ### The tech stack
 
