@@ -94,4 +94,4 @@ SERVER_NAMES="staging.myawesomeapi.com" APP_IPS="191.250.112.118, 201.102.118.11
 
 ### Next
 
-See [Out of box integrations](./whats_included-integrations.md)
+See [Out of the box integrations](./whats_included-integrations.md)
