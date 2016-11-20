@@ -7,7 +7,7 @@
 Being a grape-oriented application makes your `rake routes` command just listing an empty set of routes. (the ones this template made the setup)  
 To fix this, this projects include one rake task to list all application routes:
 
-##### Routes tasks
+#### Routes tasks
 
 ```
 ➔ rake api:routes DESCRIPTION=true
@@ -49,7 +49,9 @@ POST       /api/v1/users/activate_account/:token(.json)
 (...)
 ```
 
-##### Heroku deployment tasks
+---
+
+#### Heroku deployment tasks
 
 You can deploy to multiples environments just running a rake task:
 
@@ -70,7 +72,9 @@ RUN_MIGRATIONS=true rake heroku:staging:deploy
 **CAUTION**: This is a very destructive action that you should [never try to do in production](http://willi.am/blog/2014/08/12/the-dark-side-of-the-force-push/)....but just for your information, this can be done running the rake task with `FORCE=true rake heroku:staging:deploy`:
 
 
-##### Codebase Stats
+---
+
+#### Codebase Stats
 
 I like statistics, and probably you do too! Try running:
 
