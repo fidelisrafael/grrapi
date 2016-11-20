@@ -1,21 +1,21 @@
-## Grapi documentation
+## Grrapi docs
 
 ---
 
 ### Configuration
 
-RAS cames as a very configurable friendly application, we use [**Figaro**](https://github.com/laserlemon/figaro) to our app configuration through env variables.
+Grrapi cames as a very configurable friendly application, we use [**Figaro**](https://github.com/laserlemon/figaro) to our app configuration through env variables.
 This is considered a best pratice cuz pratically removes **hard coded** configuration lost in the middle of your codebase.
 Take a look in **Configuration internals** to better understand all possible configurations.
 
-For better integration with your rails project, RAS expect that your project is running **postgresql**, but of course, you can use with others databases, but take note of this things:
+For better integration with your rails project, Grrapi expect that your project is running **postgresql**, but of course, you can use with others databases, but take note of this things:
 
 * Users preferences are stored in a [`hstore`](./template_files/migrations/20160807164036_add_preferences_to_user.rb) column  of postgres.
  - You will need to change this in [**this migration file**](./template_files/migrations/20160807164036_add_preferences_to_user.rb) to an equivalent column type in your database, if your database don't support JSON, please use `text` as column type.(But this will not enable you to perform efficients querys againts this data)
 
 #### Rack Middlewares
 
-**RAS** remove the following [middlewares](http://edgeguides.rubyonrails.org/api_app.html#choosing-middleware) from being processed by Rack in **each request**:
+**Grrapi** remove the following [middlewares](http://edgeguides.rubyonrails.org/api_app.html#choosing-middleware) from being processed by Rack in **each request**:
 
 ```ruby
 ActionDispatch::Static # disable static file serving(such css,js)
@@ -28,12 +28,12 @@ Rack::MethodOverride # No need to check request methdo using `_method` in params
 
 #### Rails Default Generators
 
-When you use any of Rails generators(such `rails generate resource Post`, by default things such `assets`, `views`, `stylesheets`, `javascript` are created by default, one behavior you dont want in your API project, right?. **RAS** configure your application **to skip generation** for theses kind of files. (since you're an API you *dont want* to serve static files)
+When you use any of Rails generators(such `rails generate resource Post`, by default things such `assets`, `views`, `stylesheets`, `javascript` are created by default, one behavior you dont want in your API project, right?. **Grrapi** configure your application **to skip generation** for theses kind of files. (since you're an API you *dont want* to serve static files)
 
 
 #### CORS
 
-**RAS** uses `rack-cors` to enable [Cross Origin Resource Sharing](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing). You can configure which `Origin` and `Methods` are allowed in `config/application.yml`:
+**Grrapi** uses `rack-cors` to enable [Cross Origin Resource Sharing](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing). You can configure which `Origin` and `Methods` are allowed in `config/application.yml`:
 
 ```
 # Use this to determine CORS configuration
