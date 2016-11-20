@@ -58,7 +58,6 @@ To be more cleaner, I was tired of moving along pieces of code through all new A
 * [How it Works](#how-it-works)
 * [Deeper Look](./docs/deeper_look.md)
 * [Roadmap](#calendar-roadmap-)
-* [Development](#computer-development)
 * [Contributing](#thumbsup-contributing)
 * [License - MIT](#memo-license)
 
@@ -108,10 +107,6 @@ user -> rack -> puma -> rails -> grape -> service -> serializer -> response
 ## :calendar: Roadmap <a name="roadmap"></a>
 
 - :white_medium_small_square: Create demo application with Postman collection available
-
----
-
-## :computer: Development
 
 
 ---
