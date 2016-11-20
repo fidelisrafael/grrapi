@@ -1,9 +1,9 @@
-# Ruby API Starter Boilerplate
+# Grape as Ruby REST API Starter Boilerplate (Grrapi)
 
 ## About
 
-The aim of this project is to enable **super fast & amazing architected development and deployment** of REST API projects using Ruby as server side language.
-You can learn all the benefits RAS will give to you through this documentation. 
+The objective of this project is to enable **super fast & amazing architected development and deployment** of REST API projects using Ruby (and Grape as API micro framework) as server side language.
+You can learn all the benefits Grrapi(Grape as Ruby REST API) will give to you through this documentation. 
 
 To be more cleaner, I was tired of moving along pieces of code through all new API project I started, so I decided to create a **minimal API starter boilerplate** for my projects, and this saved me **A LOT** of time. (And not only time, but wasted time, cuz I will need to develop again e again things that I've implemented before, so it's not super funny time, and this get worse when you don't have such too much time to spend configurating and doing things that you can automatized to get results faster).
 
@@ -85,9 +85,9 @@ Just by using this template, you can save **weeks of work** from your team, this
 | :x: delete account | hard or soft delete of user data |
 | :construction: automated deployment | for heroku our cloud(such AWS, Digital Ocean) |
 | :vertical_traffic_light: configurable environment | use system environment variables to ocnfigure sensitive application configurations |
-| :computer: front-end client | use this [AngularJS project](https://github.com/fidelisrafael/ruby-api-starter-boilerplate-angularjs-client) as basic starter point for client applications |
+| :computer: front-end client | use this [AngularJS project](https://github.com/fidelisrafael/grapi-angularjs-client) as basic starter point for client applications |
 
-Things exposed above are really time taking in most of projects, because almost every product have this same key necessities(eg: configuration, deployment) and features(such login, password management, registration). By using **Ruby API Starter (RAS)** you can save weeks of work with a very well structured base boilerplate for your projects by starting and deploying your application in matter of minutes.
+Things exposed above are really time taking in most of projects, because almost every product have this same key necessities(eg: configuration, deployment) and features(such login, password management, registration). By using **Ruby API Starter (Grapi)** you can save weeks of work with a very well structured base boilerplate for your projects by starting and deploying your application in matter of minutes.
 
 Interested? Procced to [**Acknowledgements**](./docs/acknowledgements.md)
 
@@ -113,7 +113,7 @@ user -> rack -> puma -> rails -> grape -> service -> serializer -> response
 
 ## :thumbsup: Contributing
 
-Bug reports and pull requests are welcome on GitHub at http://github.com/fidelisrafael/ruby-rest-api-starter. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at http://github.com/fidelisrafael/Grape-as-Ruby-REST-API-Starter-Boilerplate. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
 ---
 

@@ -1,4 +1,4 @@
-## Grapi documentation
+## Grrapi docs
 
 ---
 

@@ -1,10 +1,10 @@
-## Grapi documentation
+## Grrapi docs
 
 ---
 
 ### Deployment
 
-This project force the developer to start from the beginning thinking in staging and production environment for deploy. See below the deployment options that RAS gives to you:
+This project force the developer to start from the beginning thinking in staging and production environment for deploy. See below the deployment options that Grrapi gives to you:
 
 #### Option 1: Deploy your application to Heroku
 
@@ -49,7 +49,7 @@ heroku-stg  https://git.heroku.com/my-api-project-staging.git (push)
 #### Option 2: Deploy your application to your cloud server using capistrano
 
 Maybe heroku is not your cup of tea - or it's just too much expensive :P -, or maybe you just want to run your application code in your [**cloud IaaS**](https://en.wikipedia.org/wiki/Cloud_computing) (*such AWS, Softlayer, Digital Ocean*) of choice, or even in your own infrastructure.
-RAS trust on *capistrano* to deployment, the only things you need to do in your server is to install **all required dependencies**(such `pngoptimin`).
+Grrapi trust on *capistrano* to deployment, the only things you need to do in your server is to install **all required dependencies**(such `pngoptimin`).
 
 To deploy your awesome application to an environment, simple run:
 
