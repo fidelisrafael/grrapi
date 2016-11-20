@@ -38,4 +38,4 @@ Beside this, I want to say that I got good feedbacks from all other people(cowor
 
 ### Next
 
-See [Feature](./features.md)
+See [Features](./features.md)

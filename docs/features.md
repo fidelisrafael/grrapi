@@ -6,7 +6,7 @@
 
 Please, refer to ["What's included"](#whats-included) for a more deeper overview of features, below only the main points highlighted.
 
-#### The tech stack
+### The tech stack
 
 in a nutshell, this projects rely on:
 
@@ -29,7 +29,7 @@ in a nutshell, this projects rely on:
 * Piet _as image optimizer_
 * Rollbar _as application error tracker_
 
-#### Account Management
+### Account Management
 
 * User Registration (system and social signup)
   * Allow to force account confirmation through email to enable login 
