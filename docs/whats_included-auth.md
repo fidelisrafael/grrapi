@@ -75,9 +75,6 @@ Bellow a simple screenshot of AngularJS application fully integrated with our AP
 |![](http://i.imgur.com/QhXEpE9.png) | ![Account confirmation](http://i.imgur.com/NI6lYg0.png)| ![Invalid token](http://i.imgur.com/0zgJAYM.png) |
 
 ---
-<br />
-
----
 
 ### Next
 
