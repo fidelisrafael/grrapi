@@ -1,7 +1,7 @@
 module API
   module V1
     module Helpers
-      module UsersHelpers
+      module UserAuthHelpers
         def user_provider_auth_response(service, options = {})
           if service.success?
             # success_response_for_auth_service
@@ -49,21 +49,6 @@ module API
 
         def serialized_current_user(user, options = {})
           serialized_user(user, options.merge(serializer: :current_user))
-        end
-
-        def paginated_notifications_for_user(user, options = {})
-          notifications = paginate(user.notifications)
-          notifications.includes(:sender_user, :receiver_user, :notificable)
-        end
-
-        def paginated_serialized_notifications(notifications, options = {})
-          options = { serializer: :notification, root: :notifications }.merge(options)
-          paginated_serialized_array(notifications, options)
-        end
-
-        def serialized_user_interests(user, options = {})
-          options = { serializer: :user_interest }.merge(options)
-          serialized_array(user, options)
         end
 
       end

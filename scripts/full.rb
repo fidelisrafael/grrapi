@@ -29,7 +29,8 @@ module GrappiTemplate
     def copy_files
       copy_concerns
       copy_initializers
-      copy_http_api
+      copy_helpers
+      copy_http_api_routes
       copy_models
       copy_services
       copy_workers
@@ -39,7 +40,6 @@ module GrappiTemplate
       [
         File.join('models', 'concerns', 'user_concerns', 'address.rb'),
         File.join('models', 'concerns', 'user_concerns', 'notifications.rb'),
-        File.join('models', 'concerns', 'user_concerns', 'preferences.rb'),
       ].each do |file|
         copy_file file, File.join('app', 'model', 'concerns', 'user_concerns', File.basename(file))
       end
@@ -48,16 +48,29 @@ module GrappiTemplate
     def copy_initializers
       [
         File.join('initializers', 'parse_client.rb'),
-        File.join('initializers', 'service_notification_setup.rb')
+        File.join('initializers', 'service_notification_setup.rb'),
+        File.join('initializers', 'uniqueness_validator.rb')
       ].each do |file|
         copy_file_to file, File.join('config', 'initializers', file)
       end
     end
 
-    def copy_http_api
+    def copy_helpers
+      [
+        File.join('api', 'v1', 'helpers', 'cities_helpers.rb'),
+        File.join('api', 'v1', 'helpers', 'states_helpers.rb'),
+        File.join('api', 'v1', 'helpers', 'user_notifications_helpers.rb'),
+      ].each do |file|
+        copy_file_to file, File.join('app', 'grape', file)
+      end
+    end
+
+    def copy_http_api_routes
       [
         File.join('api', 'v1', 'routes', 'cities.rb'),
         File.join('api', 'v1', 'routes', 'states.rb'),
+        File.join('api', 'v1', 'routes', 'users_me_devices.rb'),
+        File.join('api', 'v1', 'routes', 'users_me_notifications.rb'),
       ].each do |file|
         copy_file_to file, File.join('app', 'grape', file)
       end
@@ -77,7 +90,6 @@ module GrappiTemplate
     def copy_services
       [
         File.join('services', 'v1', 'users', 'notification_create_service.rb'),
-        File.join('services', 'v1', 'users', 'preferences_update_service.rb')
       ].each do |file|
         copy_file_to file, File.join('lib', file)
       end
@@ -114,9 +126,6 @@ module GrappiTemplate
 
       inject_into_file File.join('app', 'models', 'user.rb') , after: "#==markup==\n" do
         <<-CODE
-          # User preferences handling
-          include UserConcerns::Preferences
-
           # Notifications
           include UserConcerns::Notifications
         CODE

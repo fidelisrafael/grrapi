@@ -1,10 +1,9 @@
 module API
   module V1
     class Base < API::Base
-      version 'v1'
-
-      helpers API::V1::Helpers::PaginateHelpers
       helpers API::V1::Helpers::ApplicationHelpers
+
+      version 'v1'
 
       add_swagger_documentation(
         base_path: "/api",

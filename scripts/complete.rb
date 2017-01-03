@@ -29,12 +29,15 @@ module GrappiTemplate
     def copy_files
       copy_concerns
       copy_initializers
+      copy_helpers
+      copy_http_api_routes
       copy_services
       copy_uploaders
     end
 
     def copy_concerns
       [
+        File.join('models', 'concerns', 'user_concerns', 'preferences.rb'),
         File.join('models', 'concerns', 'user_concerns', 'profile_image.rb'),
       ].each do |file|
         copy_file file, File.join('app', 'model', 'concerns', 'user_concerns', File.basename(file))
@@ -46,17 +49,24 @@ module GrappiTemplate
         File.join('initializers', 'app_cache.rb'),
         File.join('initializers', 'carrierwave.rb'),
         File.join('initializers', 'piet.rb'),
-        File.join('initializers', 'uniqueness_validator.rb')
       ].each do |file|
         copy_file_to file, File.join('config', file)
       end
     end
 
-    def copy_http_api
+    def copy_helpers
       [
-        File.join('api', 'helpers', 'cache_dsl.rb'),
-        File.join('api', 'helpers', 'cache_helpers.rb'),
-        File.join('api', 'v1', 'helpers','auth_helpers.rb'),
+        File.join('api', 'helpers', 'cache', 'cache_dsl.rb'),
+        File.join('api', 'helpers', 'cache', 'cache_helpers.rb'),
+      ].each do |file|
+        copy_file_to file, File.join('app', 'grape', 'helpers', File.basename(file))
+      end
+    end
+
+    def copy_http_api_routes
+      [
+        File.join('api', 'v1', 'routes', 'users_me_preferences.rb'),
+        File.join('api', 'v1', 'routes', 'users_me_update_image.rb')
       ].each do |file|
         copy_file_to file, File.join('app', 'grape', file)
       end
@@ -64,6 +74,7 @@ module GrappiTemplate
 
     def copy_services
       [
+        File.join('services', 'v1', 'users', 'preferences_update_service.rb'),
         File.join('services', 'v1', 'users', 'profile_image_update_service.rb')
       ].each do |file|
         copy_file_to file, File.join('lib', file)

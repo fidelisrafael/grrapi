@@ -5,7 +5,7 @@ module API
     module Routes
       class UsersMe < API::V1::Base
 
-        helpers API::Helpers::V1::UsersHelpers
+        helpers API::Helpers::V1::UserAuthHelpers
 
         before do
           authenticate_user

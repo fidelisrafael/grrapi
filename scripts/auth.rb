@@ -30,7 +30,8 @@ module GrappiTemplate
       copy_configs
       copy_factories
       copy_initializers
-      copy_http_api
+      copy_helpers
+      copy_http_api_routes
       copy_mailers
       copy_migrations
       copy_models
@@ -76,10 +77,24 @@ module GrappiTemplate
       copy_file_to File.join('initializers', 'sidekiq.rb'), File.join('config', 'initializers', 'sidekiq.rb')
     end
 
-    def copy_http_api
+    def copy_helpers
       [
         File.join('api', 'helpers', 'auth_helpers.rb'),
         File.join('api', 'v1', 'helpers','auth_helpers.rb'),
+        File.join('api', 'v1', 'helpers','user_auth_helpers.rb'),
+      ].each do |file|
+        copy_file_to file, File.join('app', 'grape', file)
+      end
+    end
+
+
+    def copy_http_api_routes
+      [
+        File.join('api', 'v1', 'routes', 'users.rb')
+        File.join('api', 'v1', 'routes', 'users_auth.rb')
+        File.join('api', 'v1', 'routes', 'users_auth_social.rb')
+        File.join('api', 'v1', 'routes', 'users_me.rb')
+        File.join('api', 'v1', 'routes', 'users_me_cacheable.rb')
       ].each do |file|
         copy_file_to file, File.join('app', 'grape', file)
       end
@@ -154,6 +169,8 @@ module GrappiTemplate
 
     def copy_workers
       [
+        File.join('workers', 'v1', 'mail_delivery_worker.rb'),
+        File.join('workers', 'v1', 'origin_create_worker.rb'),
         File.join('workers', 'v1', 'user_signup_update_worker.rb'),
         File.join('workers', 'v1', 'update_login_status_historic_worker.rb')
       ].each do |file|

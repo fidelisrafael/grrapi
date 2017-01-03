@@ -34,10 +34,6 @@ module Workers
 
         send(method_name, options)
       end
-
-      def users_mailer_welcome_admin_arguments(options)
-        [AdminUser.find_by(id: options[:admin_id] || options[:user_id])]
-      end
     end
   end
 end

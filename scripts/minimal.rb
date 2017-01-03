@@ -46,12 +46,12 @@ module GrappiTemplate
       copy_initializers
       copy_libs
       copy_locales
-      copy_http_api
+      copy_helpers
+      copy_http_api_routes
       copy_mailers
       copy_rake_tasks
       copy_services
       copy_specs
-      copy_workers
     end
 
     def copy_concerns
@@ -105,14 +105,20 @@ module GrappiTemplate
       copy_file_to File.join('config', 'locales', 'service_response.pt-BR.yml')
     end
 
-    def copy_http_api
+    def copy_helpers
+      [
+        File.join('api', 'helpers', 'application_helpers.rb'),
+        File.join('api', 'helpers', 'paginate_helpers.rb'),
+        File.join('api', 'v1', 'helpers', 'application_helpers.rb')
+      ].each do |file|
+        copy_file_to file, File.join('app', 'grape', file)
+      end
+    end
+
+    def copy_http_api_routes
       [
         File.join('api', 'base.rb'),
         File.join('api', 'v1', 'base.rb'),
-
-        File.join('api', 'helpers', 'application_helpers.rb'),
-        File.join('api', 'v1', 'helpers','application_helpers.rb'),
-        File.join('api', 'v1', 'helpers','paginate_helpers.rb'),
       ].each do |file|
         copy_file_to file, File.join('app', 'grape', file)
       end
@@ -125,15 +131,6 @@ module GrappiTemplate
 
     def copy_rake_tasks
       copy_directory 'rake_tasks', File.join('lib', 'tasks')
-    end
-
-    def copy_workers
-      [
-        File.join('workers', 'mail_delivery_worker.rb'),
-        File.join('workers', 'origin_create_worker.rb')
-      ].each do |file|
-        copy_file_to file, File.join('lib', file)
-      end
     end
 
     # In minimal setup only system services are necessary
@@ -250,6 +247,7 @@ module GrappiTemplate
       gem 'figaro'
       gem 'grape', '~> 0.12'
       gem 'grape-swagger'
+      gem 'kaminari'
       gem 'newrelic_rpm'
       gem 'nifty_services', '~> 0.0.5'
       gem 'pry'
