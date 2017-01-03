@@ -56,12 +56,12 @@ module GrappiTemplate
       copy_initializers
       copy_libs
       copy_locales
-      copy_http_api
+      copy_helpers
+      copy_http_api_routes
       copy_mailers
       copy_rake_tasks
       copy_services
       copy_specs
-      copy_workers
     end
 
     def copy_concerns
@@ -115,14 +115,20 @@ module GrappiTemplate
       copy_file_to File.join('config', 'locales', 'service_response.pt-BR.yml')
     end
 
-    def copy_http_api
+    def copy_helpers
+      [
+        File.join('api', 'helpers', 'application_helpers.rb'),
+        File.join('api', 'helpers', 'paginate_helpers.rb'),
+        File.join('api', 'v1', 'helpers', 'application_helpers.rb')
+      ].each do |file|
+        copy_file_to file, File.join('app', 'grape', file)
+      end
+    end
+
+    def copy_http_api_routes
       [
         File.join('api', 'base.rb'),
         File.join('api', 'v1', 'base.rb'),
-
-        File.join('api', 'helpers', 'application_helpers.rb'),
-        File.join('api', 'v1', 'helpers','application_helpers.rb'),
-        File.join('api', 'v1', 'helpers','paginate_helpers.rb'),
       ].each do |file|
         copy_file_to file, File.join('app', 'grape', file)
       end
@@ -135,15 +141,6 @@ module GrappiTemplate
 
     def copy_rake_tasks
       copy_directory 'rake_tasks', File.join('lib', 'tasks')
-    end
-
-    def copy_workers
-      [
-        File.join('workers', 'mail_delivery_worker.rb'),
-        File.join('workers', 'origin_create_worker.rb')
-      ].each do |file|
-        copy_file_to file, File.join('lib', file)
-      end
     end
 
     # In minimal setup only system services are necessary
@@ -260,6 +257,7 @@ module GrappiTemplate
       gem 'figaro'
       gem 'grape', '~> 0.12'
       gem 'grape-swagger'
+      gem 'kaminari'
       gem 'newrelic_rpm'
       gem 'nifty_services', '~> 0.0.5'
       gem 'pry'
@@ -346,7 +344,8 @@ module GrappiTemplate
       copy_configs
       copy_factories
       copy_initializers
-      copy_http_api
+      copy_helpers
+      copy_http_api_routes
       copy_mailers
       copy_migrations
       copy_models
@@ -392,10 +391,24 @@ module GrappiTemplate
       copy_file_to File.join('initializers', 'sidekiq.rb'), File.join('config', 'initializers', 'sidekiq.rb')
     end
 
-    def copy_http_api
+    def copy_helpers
       [
         File.join('api', 'helpers', 'auth_helpers.rb'),
         File.join('api', 'v1', 'helpers','auth_helpers.rb'),
+        File.join('api', 'v1', 'helpers','user_auth_helpers.rb'),
+      ].each do |file|
+        copy_file_to file, File.join('app', 'grape', file)
+      end
+    end
+
+
+    def copy_http_api_routes
+      [
+        File.join('api', 'v1', 'routes', 'users.rb')
+        File.join('api', 'v1', 'routes', 'users_auth.rb')
+        File.join('api', 'v1', 'routes', 'users_auth_social.rb')
+        File.join('api', 'v1', 'routes', 'users_me.rb')
+        File.join('api', 'v1', 'routes', 'users_me_cacheable.rb')
       ].each do |file|
         copy_file_to file, File.join('app', 'grape', file)
       end
@@ -470,6 +483,8 @@ module GrappiTemplate
 
     def copy_workers
       [
+        File.join('workers', 'v1', 'mail_delivery_worker.rb'),
+        File.join('workers', 'v1', 'origin_create_worker.rb'),
         File.join('workers', 'v1', 'user_signup_update_worker.rb'),
         File.join('workers', 'v1', 'update_login_status_historic_worker.rb')
       ].each do |file|
@@ -535,16 +550,40 @@ module GrappiTemplate
 
     def setup_routes
       setup_sidekiq_routes
+      mount_grape_endpoints
+    end
+
+    def mount_grape_endpoints
+      base_file = File.join('app','grape','api','base.rb')
+      v1_base_file = File.join('app','grape','api','v1','base.rb')
+
+      inject_into_file base_file, after: "helpers API::Helpers::ApplicationHelpers\n" do
+        "helpers API::Helpers::AuthHelpers"
+      end
+
+      inject_into_file v1_base_file, before: "version 'v1'\n" do
+        "helpers API::Helpers::V1::AuthHelpers"
+      end
+
+      inject_into_file v1_base_file, after: "version 'v1'\n" do
+        <<-CODE
+          mount V1::Routes::Users
+          mount V1::Routes::UsersAuth
+          mount V1::Routes::UsersAuthSocial
+          mount V1::Routes::UsersMe
+          mount V1::Routes::UsersMeCacheable
+        CODE
+      end
     end
 
     def setup_sidekiq_routes
-      prepend_to_file 'config/routes.rb' do
+      prepend_to_file File.join("config","routes.rb") do
         <<-CODE
     require 'sidekiq/web'
         CODE
       end
 
-      inject_into_file "config/routes.rb", after: "mount API::Base => '/'\n" do
+      inject_into_file File.join("config","routes.rb"), after: "mount API::Base => '/'\n" do
         <<-CODE
     Sidekiq::Web.use Rack::Auth::Basic do |username, password|
       username == Application::Config.sidekiq_username && password == Application::Config.sidekiq_password
@@ -587,12 +626,15 @@ module GrappiTemplate
     def copy_files
       copy_concerns
       copy_initializers
+      copy_helpers
+      copy_http_api_routes
       copy_services
       copy_uploaders
     end
 
     def copy_concerns
       [
+        File.join('models', 'concerns', 'user_concerns', 'preferences.rb'),
         File.join('models', 'concerns', 'user_concerns', 'profile_image.rb'),
       ].each do |file|
         copy_file file, File.join('app', 'model', 'concerns', 'user_concerns', File.basename(file))
@@ -604,17 +646,24 @@ module GrappiTemplate
         File.join('initializers', 'app_cache.rb'),
         File.join('initializers', 'carrierwave.rb'),
         File.join('initializers', 'piet.rb'),
-        File.join('initializers', 'uniqueness_validator.rb')
       ].each do |file|
         copy_file_to file, File.join('config', file)
       end
     end
 
-    def copy_http_api
+    def copy_helpers
       [
-        File.join('api', 'helpers', 'cache_dsl.rb'),
-        File.join('api', 'helpers', 'cache_helpers.rb'),
-        File.join('api', 'v1', 'helpers','auth_helpers.rb'),
+        File.join('api', 'helpers', 'cache', 'cache_dsl.rb'),
+        File.join('api', 'helpers', 'cache', 'cache_helpers.rb'),
+      ].each do |file|
+        copy_file_to file, File.join('app', 'grape', 'helpers', File.basename(file))
+      end
+    end
+
+    def copy_http_api_routes
+      [
+        File.join('api', 'v1', 'routes', 'users_me_preferences.rb'),
+        File.join('api', 'v1', 'routes', 'users_me_update_image.rb')
       ].each do |file|
         copy_file_to file, File.join('app', 'grape', file)
       end
@@ -622,6 +671,7 @@ module GrappiTemplate
 
     def copy_services
       [
+        File.join('services', 'v1', 'users', 'preferences_update_service.rb'),
         File.join('services', 'v1', 'users', 'profile_image_update_service.rb')
       ].each do |file|
         copy_file_to file, File.join('lib', file)
@@ -702,7 +752,25 @@ module GrappiTemplate
     ### ==== Routes setup ====
 
     def setup_routes
-      # silence is golden
+      mount_grape_endpoints
+    end
+
+    def mount_grape_endpoints
+      v1_base_file = File.join('app','grape','api','v1','base.rb')
+
+      inject_into_file v1_base_file, after: "mount V1::Routes::UsersMeCacheable\n" do
+        <<-CODE
+          mount V1::Routes::UsersMePreferences
+          mount V1::Routes::UsersMeUpdateImage
+        CODE
+      end
+
+      inject_into_file v1_base_file, before: "version 'v1'\n" do
+        <<-CODE
+          include API::Helpers::CacheDSL
+          helpers API::Helpers::CacheHelpers
+        CODE
+      end
     end
 
   end
@@ -738,7 +806,8 @@ module GrappiTemplate
     def copy_files
       copy_concerns
       copy_initializers
-      copy_http_api
+      copy_helpers
+      copy_http_api_routes
       copy_models
       copy_services
       copy_workers
@@ -748,7 +817,6 @@ module GrappiTemplate
       [
         File.join('models', 'concerns', 'user_concerns', 'address.rb'),
         File.join('models', 'concerns', 'user_concerns', 'notifications.rb'),
-        File.join('models', 'concerns', 'user_concerns', 'preferences.rb'),
       ].each do |file|
         copy_file file, File.join('app', 'model', 'concerns', 'user_concerns', File.basename(file))
       end
@@ -757,16 +825,29 @@ module GrappiTemplate
     def copy_initializers
       [
         File.join('initializers', 'parse_client.rb'),
-        File.join('initializers', 'service_notification_setup.rb')
+        File.join('initializers', 'service_notification_setup.rb'),
+        File.join('initializers', 'uniqueness_validator.rb')
       ].each do |file|
         copy_file_to file, File.join('config', 'initializers', file)
       end
     end
 
-    def copy_http_api
+    def copy_helpers
+      [
+        File.join('api', 'v1', 'helpers', 'cities_helpers.rb'),
+        File.join('api', 'v1', 'helpers', 'states_helpers.rb'),
+        File.join('api', 'v1', 'helpers', 'user_notifications_helpers.rb'),
+      ].each do |file|
+        copy_file_to file, File.join('app', 'grape', file)
+      end
+    end
+
+    def copy_http_api_routes
       [
         File.join('api', 'v1', 'routes', 'cities.rb'),
         File.join('api', 'v1', 'routes', 'states.rb'),
+        File.join('api', 'v1', 'routes', 'users_me_devices.rb'),
+        File.join('api', 'v1', 'routes', 'users_me_notifications.rb'),
       ].each do |file|
         copy_file_to file, File.join('app', 'grape', file)
       end
@@ -786,7 +867,6 @@ module GrappiTemplate
     def copy_services
       [
         File.join('services', 'v1', 'users', 'notification_create_service.rb'),
-        File.join('services', 'v1', 'users', 'preferences_update_service.rb')
       ].each do |file|
         copy_file_to file, File.join('lib', file)
       end
@@ -823,9 +903,6 @@ module GrappiTemplate
 
       inject_into_file File.join('app', 'models', 'user.rb') , after: "#==markup==\n" do
         <<-CODE
-          # User preferences handling
-          include UserConcerns::Preferences
-
           # Notifications
           include UserConcerns::Notifications
         CODE
@@ -851,7 +928,19 @@ module GrappiTemplate
     ### ==== Routes setup ====
 
     def setup_routes
-      # silence is golden
+      mount_grape_endpoints
+    end
+
+    def mount_grape_endpoints
+      v1_base_file = File.join('app','grape','api','v1','base.rb')
+
+      inject_into_file v1_base_file, after: "mount V1::Routes::UsersMeCacheable\n" do
+        <<-CODE
+          mount V1::Routes::Cities
+          mount V1::Routes::States
+          mount V1::Routes::UsersMeNotifications
+        CODE
+      end
     end
 
   end
