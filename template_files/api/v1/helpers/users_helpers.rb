@@ -1,6 +1,6 @@
 module API
-  module Helpers
-    module V1
+  module V1
+    module Helpers
       module UsersHelpers
         def user_provider_auth_response(service, options = {})
           if service.success?

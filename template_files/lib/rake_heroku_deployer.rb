@@ -2,7 +2,7 @@ require 'colorize'
 
 class RakeHerokuDeployer
 
-  DEFAULT_CONFIG_FILE_PATH = File.join('config', '.heroku-deploy.yml')
+  DEFAULT_CONFIG_FILE_PATH = File.join('config', 'heroku-deploy.yml')
 
   def initialize(app_env)
     @app_env        = app_env.to_s.downcase.to_sym

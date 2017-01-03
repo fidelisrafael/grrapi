@@ -1,6 +1,6 @@
 module API
-  module Helpers
-    module V1
+  module V1
+    module Helpers
       module ApplicationHelpers
 
         def options_for_ordering(params)

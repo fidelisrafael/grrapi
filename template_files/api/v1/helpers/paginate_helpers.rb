@@ -1,6 +1,6 @@
 module API
-  module Helpers
-    module V1
+  module V1
+    module Helpers
       module PaginateHelpers
 
         def pagination_cache_replace_data(resource_id = nil)
