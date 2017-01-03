@@ -4,7 +4,8 @@ module GrappiTemplate
 
   module Helpers
     protected def app_name
-      ARGV[1].underscore rescue 'application'
+      Rails.application.class.parent_name.underscore
+      # ARGV[1].underscore rescue 'application'
     end
 
     protected def copy_directory(src, dest)

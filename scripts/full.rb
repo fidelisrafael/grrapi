@@ -151,7 +151,19 @@ module GrappiTemplate
     ### ==== Routes setup ====
 
     def setup_routes
-      # silence is golden
+      mount_grape_endpoints
+    end
+
+    def mount_grape_endpoints
+      v1_base_file = File.join('app','grape','api','v1','base.rb')
+
+      inject_into_file v1_base_file, after: "mount V1::Routes::UsersMeCacheable\n" do
+        <<-CODE
+          mount V1::Routes::Cities
+          mount V1::Routes::States
+          mount V1::Routes::UsersMeNotifications
+        CODE
+      end
     end
 
   end

@@ -236,16 +236,40 @@ module GrappiTemplate
 
     def setup_routes
       setup_sidekiq_routes
+      mount_grape_endpoints
+    end
+
+    def mount_grape_endpoints
+      base_file = File.join('app','grape','api','base.rb')
+      v1_base_file = File.join('app','grape','api','v1','base.rb')
+
+      inject_into_file base_file, after: "helpers API::Helpers::ApplicationHelpers\n" do
+        "helpers API::Helpers::AuthHelpers"
+      end
+
+      inject_into_file v1_base_file, before: "version 'v1'\n" do
+        "helpers API::Helpers::V1::AuthHelpers"
+      end
+
+      inject_into_file v1_base_file, after: "version 'v1'\n" do
+        <<-CODE
+          mount V1::Routes::Users
+          mount V1::Routes::UsersAuth
+          mount V1::Routes::UsersAuthSocial
+          mount V1::Routes::UsersMe
+          mount V1::Routes::UsersMeCacheable
+        CODE
+      end
     end
 
     def setup_sidekiq_routes
-      prepend_to_file 'config/routes.rb' do
+      prepend_to_file File.join("config","routes.rb") do
         <<-CODE
     require 'sidekiq/web'
         CODE
       end
 
-      inject_into_file "config/routes.rb", after: "mount API::Base => '/'\n" do
+      inject_into_file File.join("config","routes.rb"), after: "mount API::Base => '/'\n" do
         <<-CODE
     Sidekiq::Web.use Rack::Auth::Basic do |username, password|
       username == Application::Config.sidekiq_username && password == Application::Config.sidekiq_password

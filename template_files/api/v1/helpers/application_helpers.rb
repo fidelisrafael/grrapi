@@ -117,7 +117,9 @@ module API
           raise 'Invalid message_key for message error' if message_key.blank?
 
           errors = [
-            i18n_type == :by_error_type ? I18n.t("errors.#{type}.#{message_key}") : I18n.t("errors.#{message_key}.#{type}")
+            i18n_type == :by_error_type ?
+               I18n.t("errors.#{type}.#{message_key}") :
+               I18n.t("errors.#{message_key}.#{type}")
           ]
 
           generic_error_response(status_code, errors)

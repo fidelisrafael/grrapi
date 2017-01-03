@@ -3,7 +3,7 @@
 module API
   module V1
     module Routes
-      class UsersMe < API::V1::Base
+      class UsersMeUpdateImage < API::V1::Base
 
         helpers API::V1::Helpers::UsersHelpers
 
