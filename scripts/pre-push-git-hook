@@ -1,0 +1,16 @@
+#!/bin/sh
+
+oldmd5=`md5sum template.rb | awk '{ print $1 }'`
+
+ruby generate-unique-file.rb
+
+newmd5=`md5sum template.rb | awk '{ print $1 }'`
+
+if [ $oldmd5 != $newmd5 ]
+  then
+  echo "Your changes resulted in a new template.rb."
+  git add template.rb
+  git commit -m "Generating new template.rb version"
+fi
+
+exit 0
