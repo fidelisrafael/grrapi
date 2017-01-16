@@ -6,7 +6,7 @@ module GrappiTemplate
 
     module_function
 
-    def run
+    def run_template!
       puts "Copying required files for minimal template"
       copy_files
 
@@ -21,8 +21,6 @@ module GrappiTemplate
 
       puts "Finished applying minimal template"
     end
-
-    private
 
     ### ==== Copy files from this template to new generated Rails project ====
 
@@ -118,14 +116,14 @@ module GrappiTemplate
 
     def configure_user_model
       inject_into_file File.join('app', 'models', 'user.rb') , after: "class User < ActiveRecord::Base\n" do
-        <<-CODE
+        <<-CODE.strip_heredoc
           # soft delete
           acts_as_paranoid
         CODE
       end
 
       inject_into_file File.join('app', 'models', 'user.rb') , after: "#==markup==\n" do
-        <<-CODE
+        <<-CODE.strip_heredoc
           # Notifications
           include UserConcerns::Notifications
         CODE
@@ -141,7 +139,7 @@ module GrappiTemplate
 
     def setup_core_gems
       inject_into_file 'Gemfile', after: "gem 'nifty_services', '~> 0.0.5'\n" do
-      <<-CODE
+      <<-CODE.strip_heredoc
         gem 'paranoia', '~> 2.0.0'
         gem 'parse-ruby-client', git: 'https://github.com/adelevie/parse-ruby-client.git'
       CODE
@@ -158,7 +156,7 @@ module GrappiTemplate
       v1_base_file = File.join('app','grape','api','v1','base.rb')
 
       inject_into_file v1_base_file, after: "mount V1::Routes::UsersMeCacheable\n" do
-        <<-CODE
+        <<-CODE.strip_heredoc
           mount V1::Routes::Cities
           mount V1::Routes::States
           mount V1::Routes::UsersMeNotifications

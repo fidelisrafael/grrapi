@@ -103,6 +103,10 @@ module API
         env['HTTP_X_FORWARDED_FOR'] || env['REMOTE_ADDR']
       end
 
+      def authentication_provider
+        nil
+      end
+      
       def origin_object
         @origin ||= {
           provider: authentication_provider,

@@ -5,6 +5,8 @@ module API
 
       version 'v1'
 
+      mount V1::Routes::Heartbeat
+
       add_swagger_documentation(
         base_path: "/api",
         hide_format: true,

@@ -5,7 +5,7 @@ module GrappiTemplate
     include Helpers
 
     module_function
-    def run
+    def run_template!
       puts "Copying required files for auth template"
       copy_files
 
@@ -20,8 +20,6 @@ module GrappiTemplate
 
       puts "Finished applying auth template"
     end
-
-    private
 
     ### ==== Copy files from this template to new generated Rails project ====
 
@@ -90,11 +88,11 @@ module GrappiTemplate
 
     def copy_http_api_routes
       [
-        File.join('api', 'v1', 'routes', 'users.rb')
-        File.join('api', 'v1', 'routes', 'users_auth.rb')
-        File.join('api', 'v1', 'routes', 'users_auth_social.rb')
-        File.join('api', 'v1', 'routes', 'users_me.rb')
-        File.join('api', 'v1', 'routes', 'users_me_cacheable.rb')
+        File.join('api', 'v1', 'routes', 'users.rb'),
+        File.join('api', 'v1', 'routes', 'users_auth.rb'),
+        File.join('api', 'v1', 'routes', 'users_auth_social.rb'),
+        File.join('api', 'v1', 'routes', 'users_me.rb'),
+        File.join('api', 'v1', 'routes', 'users_me_cacheable.rb'),
       ].each do |file|
         copy_file_to file, File.join('app', 'grape', file)
       end
@@ -186,7 +184,7 @@ module GrappiTemplate
 
     def configure_user_model
       inject_into_file File.join('app', 'models', 'user.rb') , after: "#==markup==\n" do
-        <<-CODE
+        <<-CODE.strip_heredoc
           # Access Level Control
           include Accessable
 
@@ -252,7 +250,7 @@ module GrappiTemplate
       end
 
       inject_into_file v1_base_file, after: "version 'v1'\n" do
-        <<-CODE
+        <<-CODE.strip_heredoc
           mount V1::Routes::Users
           mount V1::Routes::UsersAuth
           mount V1::Routes::UsersAuthSocial
@@ -264,13 +262,13 @@ module GrappiTemplate
 
     def setup_sidekiq_routes
       prepend_to_file File.join("config","routes.rb") do
-        <<-CODE
+        <<-CODE.strip_heredoc
     require 'sidekiq/web'
         CODE
       end
 
       inject_into_file File.join("config","routes.rb"), after: "mount API::Base => '/'\n" do
-        <<-CODE
+        <<-CODE.strip_heredoc
     Sidekiq::Web.use Rack::Auth::Basic do |username, password|
       username == Application::Config.sidekiq_username && password == Application::Config.sidekiq_password
     end

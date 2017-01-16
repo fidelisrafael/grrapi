@@ -5,7 +5,7 @@ module GrappiTemplate
     include Helpers
 
     module_function
-    def run
+    def run_template!
       puts "Removing useless Rails files"
       remove_files
 
@@ -23,8 +23,6 @@ module GrappiTemplate
 
       puts "Finished applying minimal template"
     end
-
-    private
 
     ### ==== Remove files from generated Rails project and copy template files ====
 
@@ -87,7 +85,7 @@ module GrappiTemplate
         File.join('initializers', 'ams.rb'), # active model serializer
         File.join('initializers', 'app_config.rb'),
         File.join('initializers', 'loaders.rb'),
-        File.join('initializers', 'new_relic_grape.rb')
+        File.join('initializers', 'new_relic_grape.rb'),
         File.join('initializers', 'nifty_services_setup.rb'),
         File.join('initializers', 'rollbar.rb'),
         File.join('initializers', 'services_setup.rb')
@@ -119,6 +117,7 @@ module GrappiTemplate
       [
         File.join('api', 'base.rb'),
         File.join('api', 'v1', 'base.rb'),
+        File.join('api', 'v1', 'routes', 'heartbeat.rb')
       ].each do |file|
         copy_file_to file, File.join('app', 'grape', file)
       end
@@ -159,29 +158,29 @@ module GrappiTemplate
     def configure_application_rb
       inject_into_class "config/application.rb", 'Application' do
         <<-CODE
-      # we're dropping not necessarily middlewares for API HTTP request processing
-      config.middleware.delete "ActionDispatch::Static"
-      config.middleware.delete "ActionDispatch::Cookies"
-      config.middleware.delete "ActionDispatch::Session::CookieStore"
-      config.middleware.delete "ActionDispatch::Flash"
-      config.middleware.delete "Rack::MethodOverride"
+    # we're dropping not necessarily middlewares for API HTTP request processing
+    config.middleware.delete "ActionDispatch::Static"
+    config.middleware.delete "ActionDispatch::Cookies"
+    config.middleware.delete "ActionDispatch::Session::CookieStore"
+    config.middleware.delete "ActionDispatch::Flash"
+    config.middleware.delete "Rack::MethodOverride"
 
-      # Since it's an API, we dont need to generate any kind of asset or views(only for mailers)
-      config.generators do |g|
-        # g.template_engine nil
-        g.stylesheets     false
-        g.javascripts     false
-        g.assets          false
-        g.helper          false
-      end
+    # Since it's an API, we dont need to generate any kind of asset or views(only for mailers)
+    config.generators do |g|
+      # g.template_engine nil
+      g.stylesheets     false
+      g.javascripts     false
+      g.assets          false
+      g.helper          false
+    end
 
-      # Add lib folder to autoload paths (to auto reload code when changed)
-      config.paths.add File.join(Rails.root, 'lib'), glob: File.join('**', '*.rb')
-      config.autoload_paths << Rails.root.join('lib')
+    # Add lib folder to autoload paths (to auto reload code when changed)
+    config.paths.add File.join(Rails.root, 'lib'), glob: File.join('**', '*.rb')
+    config.autoload_paths << Rails.root.join('lib')
 
-      # load Grape API files
-      config.autoload_paths += Dir.glob(File.join(Rails.root, 'app', 'grape', '{**,*}'))
-      config.paths.add File.join(Rails.root, 'app', 'grape'), glob: File.join('**', '*.rb')
+    # load Grape API files
+    config.autoload_paths += Dir.glob(File.join(Rails.root, 'app', 'grape', '{**,*}'))
+    config.paths.add File.join(Rails.root, 'app', 'grape'), glob: File.join('**', '*.rb')
         CODE
       end
     end
@@ -189,8 +188,7 @@ module GrappiTemplate
     def configure_config_ru
       # This file is used by Rack-based servers to start the application.
       append_to_file "config.ru" do
-      <<-CODE
-      \n
+      <<-CODE.strip_heredoc
       require 'rack/cors'
 
       use Rack::Cors do
@@ -202,7 +200,6 @@ module GrappiTemplate
               :methods => [:get, :post, :delete, :put, :options]
         end
       end
-
       CODE
       end
     end
@@ -212,7 +209,8 @@ module GrappiTemplate
         prepend_to_file file, "require_relative '../config'\n"
         inject_into_file file, after: "Rails.application.configure do\n" do
           <<-CODE
-            Application::SMTP.configure(config)
+  # Configure SMTP server
+  Application::SMTP.configure(config)
           CODE
         end
       end
@@ -220,7 +218,7 @@ module GrappiTemplate
 
     def configure_seeds_rb
       append_to_file "db/seeds.rb" do
-        <<-CODE
+        <<-CODE.strip_heredoc
       actions = ENV['ACTIONS'].present? ? ENV['ACTIONS'].split(',').map(&:squish) : nil
       Services::V1::System::CreateDefaultDataService.new(actions: actions).execute
         CODE
@@ -238,7 +236,7 @@ module GrappiTemplate
 
     def setup_core_gems
       gem 'pg'
-      gem 'sequell'
+      gem 'sequel'
 
       gem 'active_model_serializers', '0.9.3'
       gem 'bcrypt', '~> 3.1.7'

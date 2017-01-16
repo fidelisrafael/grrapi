@@ -6,7 +6,7 @@ module GrappiTemplate
 
     module_function
 
-    def run
+    def run_template!
       puts "Copying required files for complete template"
       copy_files
 
@@ -22,7 +22,6 @@ module GrappiTemplate
       puts "Finished applying complete template"
     end
 
-    private
 
     ### ==== Copy files from this template to new generated Rails project ====
 
@@ -92,7 +91,7 @@ module GrappiTemplate
       Dir.glob('config/environments/*.rb').each do |file|
         prepend_to_file file, "require_relative '../config'\n"
         inject_into_file file, after: "Application::SMTP.configure(config)\n" do
-          <<-CODE
+          <<-CODE.strip_heredoc
             Application::Cache.configure(config)
           CODE
         end
@@ -101,7 +100,7 @@ module GrappiTemplate
 
     def configure_user_model
       inject_into_file File.join('app', 'models', 'user.rb') , after: "#==markup==\n" do
-        <<-CODE
+        <<-CODE.strip_heredoc
           # User profile images
           include UserConcerns::ProfileImage
         CODE
@@ -122,7 +121,7 @@ module GrappiTemplate
     def setup_core_gems
       # just to keep alphabetical organization in Gemfile
       inject_into_file 'Gemfile', after: "gem 'bcrypt', '~> 3.1.7'\n" do
-        <<-CODE
+        <<-CODE.strip_heredoc
           gem 'carrierwave', require: 'carrierwave'
           gem 'carrierwave-sequel', require: 'carrierwave/sequel'
         CODE
@@ -141,7 +140,7 @@ module GrappiTemplate
       end
 
       inject_into_file 'Gemfile', after: "gem 'nifty_services', '~> 0.0.5'\n" do
-      <<-CODE
+      <<-CODE.strip_heredoc
         gem 'piet'
         gem 'png_quantizator' # piet it'self already include this gem, but just for sure
       CODE
@@ -162,14 +161,14 @@ module GrappiTemplate
       v1_base_file = File.join('app','grape','api','v1','base.rb')
 
       inject_into_file v1_base_file, after: "mount V1::Routes::UsersMeCacheable\n" do
-        <<-CODE
+        <<-CODE.strip_heredoc
           mount V1::Routes::UsersMePreferences
           mount V1::Routes::UsersMeUpdateImage
         CODE
       end
 
       inject_into_file v1_base_file, before: "version 'v1'\n" do
-        <<-CODE
+        <<-CODE.strip_heredoc
           include API::Helpers::CacheDSL
           helpers API::Helpers::CacheHelpers
         CODE

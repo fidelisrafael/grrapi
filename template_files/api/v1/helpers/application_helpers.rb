@@ -138,7 +138,7 @@ module API
           response # error!(response) (this invalidate cache :( )
         end
 
-        def generic_success_response(status = 200, response = {})
+        def generic_success_response(response = {}, status = 200)
           status status
 
           response.merge({
