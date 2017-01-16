@@ -118,7 +118,7 @@ module GrappiTemplate
         basename = File.basename(file, '.rb').sub(/\A\d+_(\w+)$/) { $1 }
         migrations.member?(basename)
       end.each do |file|
-        copy_file_to File.join('migrations', file), File.join('db', 'migrate', file)
+        copy_file_to File.join('migrations', File.basename(file)), File.join('db', 'migrate', File.basename(file))
       end
     end
 
@@ -143,7 +143,7 @@ module GrappiTemplate
         File.join('services', 'v1', 'users'),
         File.join('services', 'v1', 'concerns', 'users')
       ].each do |dir|
-        copy_directory file, File.join('lib', dir)
+        copy_directory dir, File.join('lib', dir)
       end
 
       remove_services
@@ -183,7 +183,7 @@ module GrappiTemplate
     end
 
     def configure_user_model
-      inject_into_file File.join('app', 'models', 'user.rb') , after: "#==markup==\n" do
+      inject_into_file File.join('app', 'model', 'user.rb') , after: "#==markup==\n" do
         <<-CODE.strip_heredoc
           # Access Level Control
           include Accessable

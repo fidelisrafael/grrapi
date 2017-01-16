@@ -2,6 +2,7 @@ require_relative 'helpers'
 
 module GrappiTemplate
   module Minimal
+
     include Helpers
 
     module_function

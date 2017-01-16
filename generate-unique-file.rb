@@ -17,7 +17,7 @@ dest_file.puts <<-CODE
 require 'pry'
 
 def source_paths
-  [File.expand_path(File.dirname(__FILE__))]
+  [File.expand_path(File.join(File.dirname(__FILE__), 'template_files'))]
 end
 CODE
 
@@ -41,9 +41,9 @@ def init_template_action!(argv)
   grappi_switch = "--grrapi-template-mode"
 
   default_app_type = 'minimal'
-  current_app_type = argv.find {|v| v.match(/\#{grappi_switch}=(\w+)/) }
+  current_app_type = argv.find {|v| v.match(/\#{grappi_switch}=(\\w+)/) }
 
-  application_mode = (current_app_type ? (current_app_type.match(/\#{grappi_switch}=(\w+)/) && $1)  : default_app_type ).downcase
+  application_mode = (current_app_type ? (current_app_type.match(/\#{grappi_switch}=(\\w+)/) && $1)  : default_app_type ).downcase
 
   raise "Invalid application mode \#{application_mode}" unless application_types.member?(application_mode)
 
