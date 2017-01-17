@@ -1,6 +1,6 @@
 module API
-  module Helpers
-    module V1
+  module V1
+    module Helpers
       module AuthHelpers
 
         def authentication_create_service_name

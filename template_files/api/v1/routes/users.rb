@@ -5,7 +5,7 @@ module API
     module Routes
       class Users < API::V1::Base
 
-        helpers API::Helpers::V1::UsersHelpers
+        helpers API::Helpers::V1::UserAuthHelpers
 
         namespace :users do
           desc 'Create a new user'

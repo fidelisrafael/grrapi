@@ -113,6 +113,8 @@ user -> rack -> puma -> rails -> grape -> service -> serializer -> response
 
 ## :thumbsup: Contributing
 
+This repository includes a `git hook` to generate a unique template file before pushing the code to git remote. To enable this, please, after cloning this repository you must run `chmod +x bin/create-git-hook-symlink.sh && bin/create-git-hook-symlink.sh`(this will create the file in `.git/hooks/pre-push`)  
+
 Bug reports and pull requests are welcome on GitHub at http://github.com/fidelisrafael/Grape-as-Ruby-REST-API-Starter-Boilerplate. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
 ---

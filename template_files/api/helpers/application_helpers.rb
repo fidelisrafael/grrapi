@@ -4,6 +4,8 @@ module API
   module Helpers
     module ApplicationHelpers
 
+      include ::API::Helpers::PaginateHelpers
+
       VALID_LOCALES = [
         :en,
         :"pt-BR"
@@ -12,7 +14,7 @@ module API
       CURRENT_LOCALE_HTTP_HEADER = Application::Config.current_locale_http_header
       CURRENT_LOCALE_HTTP_PARAM  = Application::Config.current_locale_http_param
 
-      DEFAULT_LOCALE = (ENV['LOCALE'] || Application::Config.default_locale || 'en').to_sym
+      DEFAULT_LOCALE = (ENV['APP_LOCALE'] || Application::Config.default_locale || 'en').to_sym
 
       def serializer(serializer)
         serializer_by_key_name(serializer).constantize
@@ -101,6 +103,10 @@ module API
         env['HTTP_X_FORWARDED_FOR'] || env['REMOTE_ADDR']
       end
 
+      def authentication_provider
+        nil
+      end
+      
       def origin_object
         @origin ||= {
           provider: authentication_provider,
@@ -112,34 +118,6 @@ module API
 
       def set_origin
         params.merge!(origin: origin_object)
-      end
-
-      def pagination_meta
-        { pagination: params[:pagination_meta] }
-      end
-
-      def paginate(collection)
-        paginate_response = super
-        set_pagination_meta_params(paginate_response)
-        paginate_response
-      end
-
-      def paginate_array(array)
-        paginate_response = Kaminari.paginate_array(array)
-        paginate(paginate_response)
-      end
-
-      def set_pagination_meta_params(data)
-        pagination_data = {
-          total_count: data.total_count,
-          total_pages: data.num_pages,
-          current_page: data.current_page,
-          next_page: data.next_page,
-          prev_page: data.prev_page,
-          per_page: params[:per_page].to_i
-        }
-
-        params[:pagination_meta] = pagination_data
       end
 
       def initialize_service(service_name, *options)

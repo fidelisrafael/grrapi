@@ -1,6 +1,6 @@
 module API
-  module Helpers
-    module V1
+  module V1
+    module Helpers
       module ApplicationHelpers
 
         def options_for_ordering(params)
@@ -117,7 +117,9 @@ module API
           raise 'Invalid message_key for message error' if message_key.blank?
 
           errors = [
-            i18n_type == :by_error_type ? I18n.t("errors.#{type}.#{message_key}") : I18n.t("errors.#{message_key}.#{type}")
+            i18n_type == :by_error_type ?
+               I18n.t("errors.#{type}.#{message_key}") :
+               I18n.t("errors.#{message_key}.#{type}")
           ]
 
           generic_error_response(status_code, errors)
@@ -136,7 +138,7 @@ module API
           response # error!(response) (this invalidate cache :( )
         end
 
-        def generic_success_response(status = 200, response = {})
+        def generic_success_response(response = {}, status = 200)
           status status
 
           response.merge({

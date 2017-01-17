@@ -1,0 +1,1 @@
+ln -s scripts/pre-push-git-hook .git/hooks/pre-push

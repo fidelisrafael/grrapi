@@ -24,9 +24,6 @@ module UserConcerns
 
       has_one :origin, as: :originable
 
-      has_one :address, as: :addressable
-      accepts_nested_attributes_for :address
-
       validates :first_name, :email, presence: true
 
       validates :email, uniqueness: true, on: [:create]
