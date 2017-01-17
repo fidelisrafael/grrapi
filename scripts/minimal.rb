@@ -256,7 +256,7 @@ module GrappiTemplate
       gem 'puma'
       gem 'rack-contrib'
       gem 'rack-cors', require: 'rack/cors'
-      gem 'rollbar', '~> 1.4.4'
+      gem 'rollbar'
     end
 
     def setup_minimal_deploy_gems

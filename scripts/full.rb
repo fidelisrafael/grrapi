@@ -86,6 +86,12 @@ module GrappiTemplate
       end
     end
 
+    def copy_auth_serializers
+      copy_directory File.join('serializers', 'v1', 'address'), File.join('lib', 'serializers', 'v1', 'address')
+      copy_directory File.join('serializers', 'v1', 'states_cities'), File.join('lib', 'serializers', 'v1', 'address')
+      copy_directory File.join('serializers', 'v1', 'notification'), File.join('lib', 'serializers', 'v1', 'notification')
+    end
+
     def copy_full_services
       [
         File.join('services', 'v1', 'users', 'notification_create_service.rb'),

@@ -186,18 +186,20 @@ module GrappiTemplate
 
     def configure_auth_user_model
       inject_into_file File.join('app', 'model', 'user.rb') , after: "#==markup==\n" do
-        <<-CODE.strip_heredoc
-          # Access Level Control
-          include Accessable
+        <<-CODE
 
-          # add callbacks to generate user's username based on `name`, `first_name` and/or `last_name`
-          include UserNamed
+  # Access Level Control
+  include Accessable
 
-          # Basic user validations and setup
-          include UserConcerns::Basic
+  # add callbacks to generate user's username based on `name`, `first_name` and/or `last_name`
+  include UserNamed
 
-          # User auth related setup (authentication, account confirmation, password recovery, account block)
-          include UserConcerns::Auth
+  # Basic user validations and setup
+  include UserConcerns::Basic
+
+  # User auth related setup (authentication, account confirmation, password recovery, account block)
+  include UserConcerns::Auth
+
         CODE
       end
     end
@@ -213,22 +215,25 @@ module GrappiTemplate
     def setup_auth_core_gems
       # just to keep alphabetical organization in Gemfile
       inject_into_file 'Gemfile', after: "gem 'database_cleaner'\n" do
-        "gem 'faker'\n"
+        <<-CODE
+gem 'faker'
+        CODE
       end
 
       inject_into_file 'Gemfile', before: "gem 'rollbar'\n" do
-        "gem 'redis-namespace'\n"
-      end
-
-      inject_into_file 'Gemfile', after: "gem 'rollbar'\n" do
-        "gem 'sidekiq'\n"
-        "gem 'sinatra', require: false\n"
+        <<-CODE
+gem 'redis-namespace'
+gem 'sidekiq'
+gem 'sinatra', require: false
+      CODE
       end
     end
 
     def setup_auth_deploy_gems
       inject_into_file 'Gemfile', after: "gem 'capistrano-safe-deploy-to', '~> 1.1.1', require: false\n" do
-        "gem 'capistrano-sidekiq', require: false\n"
+        <<-CODE
+    gem 'capistrano-sidekiq', require: false
+        CODE
       end
     end
 
@@ -239,43 +244,52 @@ module GrappiTemplate
       mount_auth_grape_endpoints
     end
 
-    def mount_auth_grape_endpoints
-      base_file = File.join('app','grape','api','base.rb')
-      v1_base_file = File.join('app','grape','api','v1','base.rb')
-
-      inject_into_file base_file, after: "helpers API::Helpers::ApplicationHelpers\n" do
-        "helpers API::Helpers::AuthHelpers"
-      end
-
-      inject_into_file v1_base_file, before: "version 'v1'\n" do
-        "helpers API::Helpers::V1::AuthHelpers"
-      end
-
-      inject_into_file v1_base_file, after: "version 'v1'\n" do
-        <<-CODE.strip_heredoc
-          mount V1::Routes::Users
-          mount V1::Routes::UsersAuth
-          mount V1::Routes::UsersAuthSocial
-          mount V1::Routes::UsersMe
-          mount V1::Routes::UsersMeCacheable
-        CODE
-      end
-    end
-
     def setup_auth_sidekiq_routes
       prepend_to_file File.join("config","routes.rb") do
-        <<-CODE.strip_heredoc
-    require 'sidekiq/web'
+        <<-CODE
+  require 'sidekiq/web'
         CODE
       end
 
       inject_into_file File.join("config","routes.rb"), after: "mount API::Base => '/'\n" do
-        <<-CODE.strip_heredoc
-    Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-      username == Application::Config.sidekiq_username && password == Application::Config.sidekiq_password
+        <<-CODE
+
+  # Configure sidekiq basic auth
+  Sidekiq::Web.use Rack::Auth::Basic do |username, password|
+    username == Application::Config.sidekiq_username && password == Application::Config.sidekiq_password
+  end
+  # Mount sidekiq Web UI at /sidekiq
+  mount Sidekiq::Web, at: '/sidekiq'
+
+        CODE
+      end
     end
 
-    mount Sidekiq::Web, at: '/sidekiq'
+    def mount_auth_grape_endpoints
+      base_file = File.join('app','grape','api','base.rb')
+      v1_base_file = File.join('app','grape','api','v1','base.rb')
+
+      inject_into_file base_file, before: "mount V1::Routes::Heartbeat\n" do
+        <<-CODE
+    helpers API::Helpers::AuthHelpers
+        CODE
+      end
+
+      inject_into_file v1_base_file, before: "mount V1::Routes::Heartbeat\n" do
+        <<-CODE
+    helpers API::V1::Helpers::AuthHelpers
+        CODE
+      end
+
+      inject_into_file v1_base_file, after: "mount V1::Routes::Heartbeat\n" do
+        <<-CODE
+
+      mount V1::Routes::Users
+      mount V1::Routes::UsersAuth
+      mount V1::Routes::UsersAuthSocial
+      mount V1::Routes::UsersMe
+      mount V1::Routes::UsersMeCacheable
+
         CODE
       end
     end

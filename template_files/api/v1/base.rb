@@ -1,9 +1,9 @@
 module API
   module V1
     class Base < API::Base
-      helpers API::V1::Helpers::ApplicationHelpers
-
       version 'v1'
+
+      helpers API::V1::Helpers::ApplicationHelpers
 
       mount V1::Routes::Heartbeat
 

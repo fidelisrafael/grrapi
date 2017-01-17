@@ -81,7 +81,7 @@ PS: This versions include a patch in `uniqueness_validator` to patch `ActiveReco
 Now, just clone this repository to an acessible location in your workstation:
 
 ```
-git clone git@github.com:fidelisrafael/Grape-as-Ruby-REST-API-Starter-Boilerplate.git
+git clone git@github.com:fidelisrafael/grappi.git
 ```
 
 Keep in mind where you downloaded this repository, you will need the path in next step.
@@ -94,15 +94,15 @@ After studing your application use cases, you've choosed one the template mode b
 To use _Grrapi_, you need to run your Rails project creation the command passing the the template URL option(`-m TEMPLATE_URL`) and `--grrapi-template-mode="mode"` which will tell the template what kind of setup to do. For example:
 
 ```
-rails new myApiProject -m /path/to/Grape-as-Ruby-REST-API-Starter-Boilerplate/template.rb --grrapi-template-mode="complete" --skip-assets --skip-javascript 
+rails new myApiProject -m /path/to/grappi/template.rb --grrapi-template-mode="complete" --skip-assets --skip-javascript --skip-spring
 ```
 
-For your API projects you must want to skip all `sprockets` handling passing `--skip-assets --skip-javascript` (*)
+For your API projects you must want to skip all `sprockets` handling passing `--skip-assets --skip-javascript --skip-spring` (*)
 
 For Rails 5, you can use `--api` flag:
 
 ```
-rails new myApiProject -m /path/to/Grape-as-Ruby-REST-API-Starter-Boilerplate/template.rb --api --grrapi-template-mode="complete"
+rails new myApiProject -m /path/to/grappi/template.rb --api --grrapi-template-mode="complete"
 ```
 
 **OBS**:  Grrapi(Grape as Ruby Rest API) take care of removing  sprockets middlewares from rack stack, this is important because your API must be always fast as possible, and removing this processement from response management is a big win).
