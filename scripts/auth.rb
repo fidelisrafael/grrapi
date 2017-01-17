@@ -1,54 +1,56 @@
-require_relative 'helpers'
-
 module GrappiTemplate
   module Auth
-    include Helpers
 
     module_function
-    def run_template!
-      puts "Copying required files for auth template"
-      copy_files
+    def run_auth_template!
+      extend Minimal
 
-      puts "Injecting configurations on specific files"
-      setup_configurations
+      # Copy all minimal template files
+      run_minimal_template!
 
-      puts "Configurating gems"
-      setup_gems
+      say "Copying required files for auth template"
+      copy_auth_files
 
-      puts "Configurating routes"
-      setup_routes
+      say "Injecting configurations on specific files"
+      setup_auth_configurations
 
-      puts "Finished applying auth template"
+      say "Configurating gems"
+      setup_auth_gems
+
+      say "Configurating routes"
+      setup_auth_routes
+
+      say "Finished applying auth template"
     end
 
     ### ==== Copy files from this template to new generated Rails project ====
 
-    def copy_files
-      copy_concerns
-      copy_configs
-      copy_factories
-      copy_initializers
-      copy_helpers
-      copy_http_api_routes
-      copy_mailers
-      copy_migrations
-      copy_models
-      copy_serializers
-      copy_services
-      copy_specs
-      copy_workers
+    def copy_auth_files
+      copy_auth_concerns
+      copy_auth_configs
+      copy_auth_factories
+      copy_auth_initializers
+      copy_auth_helpers
+      copy_auth_http_api_routes
+      copy_auth_mailers
+      copy_auth_migrations
+      copy_auth_models
+      copy_auth_serializers
+      copy_auth_services
+      copy_auth_specs
+      copy_auth_workers
     end
 
-    def copy_concerns
-      copy_global_concerns
-      copy_user_concerns
+    def copy_auth_concerns
+      copy_auth_global_concerns
+      copy_auth_user_concerns
     end
 
-    def copy_global_concerns
+    def copy_auth_global_concerns
       copy_file_to File.join('models', 'concerns', 'user_named.rb'), File.join('app', 'model', 'concerns', 'user_named.rb')
     end
 
-    def copy_user_concerns
+    def copy_auth_user_concerns
       [
         File.join('models', 'concerns', 'user_concerns', 'basic.rb'),
         File.join('models', 'concerns', 'user_concerns', 'auth.rb')
@@ -57,11 +59,11 @@ module GrappiTemplate
       end
     end
 
-    def copy_configs
+    def copy_auth_configs
       copy_file_to File.join('config', 'sidekiq.yml')
     end
 
-    def copy_factories
+    def copy_auth_factories
       [
         File.join('factories', 'authorizations.rb'),
         File.join('factories', 'origins.rb'),
@@ -71,11 +73,11 @@ module GrappiTemplate
       end
     end
 
-    def copy_initializers
+    def copy_auth_initializers
       copy_file_to File.join('initializers', 'sidekiq.rb'), File.join('config', 'initializers', 'sidekiq.rb')
     end
 
-    def copy_helpers
+    def copy_auth_helpers
       [
         File.join('api', 'helpers', 'auth_helpers.rb'),
         File.join('api', 'v1', 'helpers','auth_helpers.rb'),
@@ -86,7 +88,7 @@ module GrappiTemplate
     end
 
 
-    def copy_http_api_routes
+    def copy_auth_http_api_routes
       [
         File.join('api', 'v1', 'routes', 'users.rb'),
         File.join('api', 'v1', 'routes', 'users_auth.rb'),
@@ -98,12 +100,12 @@ module GrappiTemplate
       end
     end
 
-    def copy_mailers
+    def copy_auth_mailers
       copy_file_to File.join('mailers', 'users_mailer.rb'), File.join('app', 'mailers', 'users_mailer.rb')
       copy_directory File.join('views', 'users_mailer'), File.join('app', 'views', 'users_mailer')
     end
 
-    def copy_migrations
+    def copy_auth_migrations
       # Basic migrations for authentication & user handling
       migrations = [
         'create_users',
@@ -122,7 +124,7 @@ module GrappiTemplate
       end
     end
 
-    def copy_models
+    def copy_auth_models
       [
         File.join('models', 'authorization.rb'),
         File.join('models', 'user.rb'),
@@ -132,12 +134,12 @@ module GrappiTemplate
       end
     end
 
-    def copy_serializers
+    def copy_auth_serializers
       copy_directory File.join('serializers', 'v1', 'auth'), File.join('lib', 'serializers', 'v1', 'auth')
       copy_directory File.join('serializers', 'v1', 'user'), File.join('lib', 'serializers', 'v1', 'user')
     end
 
-    def copy_services
+    def copy_auth_services
       [
         File.join('services', 'v1', 'auth'),
         File.join('services', 'v1', 'users'),
@@ -155,7 +157,7 @@ module GrappiTemplate
       remove_file File.join('services', 'v1', 'users', 'profile_image_update_service.rb')
     end
 
-    def copy_specs
+    def copy_auth_specs
       [
         File.join('models', 'authorization_spec.rb'),
         File.join('models', 'origin_spec.rb'),
@@ -165,7 +167,7 @@ module GrappiTemplate
       end
     end
 
-    def copy_workers
+    def copy_auth_workers
       [
         File.join('workers', 'v1', 'mail_delivery_worker.rb'),
         File.join('workers', 'v1', 'origin_create_worker.rb'),
@@ -178,11 +180,11 @@ module GrappiTemplate
 
     ### ==== Configuration starts ====
 
-    def setup_configurations
-      configure_user_model
+    def setup_auth_configurations
+      configure_auth_user_model
     end
 
-    def configure_user_model
+    def configure_auth_user_model
       inject_into_file File.join('app', 'model', 'user.rb') , after: "#==markup==\n" do
         <<-CODE.strip_heredoc
           # Access Level Control
@@ -203,41 +205,41 @@ module GrappiTemplate
 
     ### ==== Gem setup ====
 
-    def setup_gems
-      setup_core_gems
-      setup_deploy_gems
+    def setup_auth_gems
+      setup_auth_core_gems
+      setup_auth_deploy_gems
     end
 
-    def setup_core_gems
+    def setup_auth_core_gems
       # just to keep alphabetical organization in Gemfile
       inject_into_file 'Gemfile', after: "gem 'database_cleaner'\n" do
-        "gem 'faker'"
+        "gem 'faker'\n"
       end
 
       inject_into_file 'Gemfile', before: "gem 'rollbar'\n" do
-        "gem 'redis-namespace'"
+        "gem 'redis-namespace'\n"
       end
 
       inject_into_file 'Gemfile', after: "gem 'rollbar'\n" do
-        "gem 'sidekiq'"
-        "gem 'sinatra', require: false"
+        "gem 'sidekiq'\n"
+        "gem 'sinatra', require: false\n"
       end
     end
 
-    def setup_deploy_gems
+    def setup_auth_deploy_gems
       inject_into_file 'Gemfile', after: "gem 'capistrano-safe-deploy-to', '~> 1.1.1', require: false\n" do
-        "gem 'capistrano-sidekiq', require: false"
+        "gem 'capistrano-sidekiq', require: false\n"
       end
     end
 
     ### ==== Routes setup ====
 
-    def setup_routes
-      setup_sidekiq_routes
-      mount_grape_endpoints
+    def setup_auth_routes
+      setup_auth_sidekiq_routes
+      mount_auth_grape_endpoints
     end
 
-    def mount_grape_endpoints
+    def mount_auth_grape_endpoints
       base_file = File.join('app','grape','api','base.rb')
       v1_base_file = File.join('app','grape','api','v1','base.rb')
 
@@ -260,7 +262,7 @@ module GrappiTemplate
       end
     end
 
-    def setup_sidekiq_routes
+    def setup_auth_sidekiq_routes
       prepend_to_file File.join("config","routes.rb") do
         <<-CODE.strip_heredoc
     require 'sidekiq/web'

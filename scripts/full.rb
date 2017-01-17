@@ -1,40 +1,41 @@
-require_relative 'helpers'
-
 module GrappiTemplate
   module Full
-    include Helpers
 
     module_function
+    def run_full_template!
+      extend Auth
 
-    def run_template!
-      puts "Copying required files for minimal template"
-      copy_files
+      # Copy all minimal + auth template files
+      run_auth_template!
 
-      puts "Injecting configurations on specific files"
-      setup_configurations
+      say "Copying required files for full template"
+      copy_full_files
 
-      puts "Configurating gems"
-      setup_gems
+      say "Injecting configurations on specific files"
+      setup_full_configurations
 
-      puts "Configurating routes"
-      setup_routes
+      say "Configurating gems"
+      setup_full_gems
 
-      puts "Finished applying minimal template"
+      say "Configurating routes"
+      setup_full_routes
+
+      say "Finished applying full template"
     end
 
     ### ==== Copy files from this template to new generated Rails project ====
 
-    def copy_files
-      copy_concerns
-      copy_initializers
-      copy_helpers
-      copy_http_api_routes
-      copy_models
-      copy_services
-      copy_workers
+    def copy_full_files
+      copy_full_concerns
+      copy_full_initializers
+      copy_full_helpers
+      copy_full_http_api_routes
+      copy_full_models
+      copy_full_services
+      copy_full_workers
     end
 
-    def copy_concerns
+    def copy_full_concerns
       [
         File.join('models', 'concerns', 'user_concerns', 'address.rb'),
         File.join('models', 'concerns', 'user_concerns', 'notifications.rb'),
@@ -43,17 +44,17 @@ module GrappiTemplate
       end
     end
 
-    def copy_initializers
+    def copy_full_initializers
       [
         File.join('initializers', 'parse_client.rb'),
-        File.join('initializers', 'service_notification_setup.rb'),
+        File.join('initializers', 'services_notification_setup.rb'),
         File.join('initializers', 'uniqueness_validator.rb')
       ].each do |file|
         copy_file_to file, File.join('config', 'initializers', file)
       end
     end
 
-    def copy_helpers
+    def copy_full_helpers
       [
         File.join('api', 'v1', 'helpers', 'cities_helpers.rb'),
         File.join('api', 'v1', 'helpers', 'states_helpers.rb'),
@@ -63,7 +64,7 @@ module GrappiTemplate
       end
     end
 
-    def copy_http_api_routes
+    def copy_full_http_api_routes
       [
         File.join('api', 'v1', 'routes', 'cities.rb'),
         File.join('api', 'v1', 'routes', 'states.rb'),
@@ -74,7 +75,7 @@ module GrappiTemplate
       end
     end
 
-    def copy_models
+    def copy_full_models
       [
         File.join('models', 'city.rb'),
         File.join('models', 'state.rb'),
@@ -85,7 +86,7 @@ module GrappiTemplate
       end
     end
 
-    def copy_services
+    def copy_full_services
       [
         File.join('services', 'v1', 'users', 'notification_create_service.rb'),
       ].each do |file|
@@ -96,7 +97,7 @@ module GrappiTemplate
       copy_directory File.join('services', 'v1', 'parse'), File.join('lib', 'services', 'v1', 'parse')
     end
 
-    def copy_workers
+    def copy_full_workers
       [
         File.join('workers', 'v1', 'notification_create_worker.rb'),
         File.join('workers', 'v1', 'parse_device_create_worker.rb'),
@@ -110,19 +111,19 @@ module GrappiTemplate
 
     ### ==== Configuration starts ====
 
-    def setup_configurations
-      configure_user_model
+    def setup_full_configurations
+      configure_full_user_model
     end
 
-    def configure_user_model
-      inject_into_file File.join('app', 'models', 'user.rb') , after: "class User < ActiveRecord::Base\n" do
+    def configure_full_user_model
+      inject_into_file File.join('app', 'model', 'user.rb') , after: "class User < ActiveRecord::Base\n" do
         <<-CODE.strip_heredoc
           # soft delete
           acts_as_paranoid
         CODE
       end
 
-      inject_into_file File.join('app', 'models', 'user.rb') , after: "#==markup==\n" do
+      inject_into_file File.join('app', 'model', 'user.rb') , after: "#==markup==\n" do
         <<-CODE.strip_heredoc
           # Notifications
           include UserConcerns::Notifications
@@ -133,11 +134,11 @@ module GrappiTemplate
 
     ### ==== Gems setup ====
 
-    def setup_gems
-      setup_core_gems
+    def setup_full_gems
+      setup_full_core_gems
     end
 
-    def setup_core_gems
+    def setup_full_core_gems
       inject_into_file 'Gemfile', after: "gem 'nifty_services', '~> 0.0.5'\n" do
       <<-CODE.strip_heredoc
         gem 'paranoia', '~> 2.0.0'
@@ -148,11 +149,11 @@ module GrappiTemplate
 
     ### ==== Routes setup ====
 
-    def setup_routes
-      mount_grape_endpoints
+    def setup_full_routes
+      mount_full_grape_endpoints
     end
 
-    def mount_grape_endpoints
+    def mount_full_grape_endpoints
       v1_base_file = File.join('app','grape','api','v1','base.rb')
 
       inject_into_file v1_base_file, after: "mount V1::Routes::UsersMeCacheable\n" do

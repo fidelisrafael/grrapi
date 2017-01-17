@@ -6,29 +6,32 @@ module GrappiTemplate
     include Helpers
 
     module_function
-    def run_template!
-      puts "Removing useless Rails files"
-      remove_files
+    def run_minimal_template!
+      say "Removing useless Rails files"
+      remove_minimal_files
 
-      puts "Copying required files for minimal template"
-      copy_files
+      say "Copying required files for minimal template"
+      copy_minimal_files
 
-      puts "Injecting configurations on specific files"
-      setup_configurations
+      say "Injecting configurations on specific files"
+      setup_minimal_configurations
 
-      puts "Configurating gems"
-      setup_gems
+      say "Configurating gems"
+      setup_minimal_gems
 
-      puts "Configurating routes"
-      setup_routes
+      say "Configurating routes"
+      setup_minimal_routes
 
-      puts "Finished applying minimal template"
+      say "Applying final minimal template"
+      finish_minimal_template
+
+      say "Finished applying minimal template"
     end
 
     ### ==== Remove files from generated Rails project and copy template files ====
 
     # remove all rails crap
-    def remove_files
+    def remove_minimal_files
       remove_dir 'app/controllers'
       remove_dir 'app/helpers'
       remove_dir 'app/assets'
@@ -36,52 +39,52 @@ module GrappiTemplate
       remove_file 'app/views/layouts/application.html.erb'
     end
 
-    def copy_files
-      copy_concerns
-      copy_configs
-      copy_configs_other
-      copy_deploy
-      copy_docs
-      copy_initializers
-      copy_libs
-      copy_locales
-      copy_helpers
-      copy_http_api_routes
-      copy_mailers
-      copy_rake_tasks
-      copy_services
-      copy_specs
+    def copy_minimal_files
+      copy_minimal_concerns
+      copy_minimal_configs
+      copy_minimal_configs_other
+      copy_minimal_deploy
+      copy_minimal_docs
+      copy_minimal_initializers
+      copy_minimal_libs
+      copy_minimal_locales
+      copy_minimal_helpers
+      copy_minimal_http_api_routes
+      copy_minimal_mailers
+      copy_minimal_rake_tasks
+      copy_minimal_services
+      copy_minimal_specs
     end
 
-    def copy_concerns
+    def copy_minimal_concerns
       copy_file_to File.join('models', 'concerns', 'accessable.rb'), File.join('app', 'model', 'concerns', 'accessable.rb')
     end
 
-    def copy_configs
+    def copy_minimal_configs
       copy_directory File.join('config', 'app_config')
       copy_file_to File.join('config', 'application.yml')
       copy_file_to File.join('config', 'config.rb')
       copy_file_to File.join('config', 'puma.rb')
     end
 
-    def copy_configs_other
+    def copy_minimal_configs_other
       copy_file_to 'Procfile'
       copy_file_to 'contributors.txt'
       copy_file_to '.rspec'
       copy_file_to '.editorconfig'
     end
 
-    def copy_deploy
+    def copy_minimal_deploy
       copy_file_to 'Capfile'
       copy_file_to File.join('config', 'heroku-deploy.yml')
       copy_directory 'deploy', File.join('config', 'deploy')
     end
 
-    def copy_docs
+    def copy_minimal_docs
       copy_directory 'docs', 'docs'
     end
 
-    def copy_initializers
+    def copy_minimal_initializers
       [
         File.join('initializers', 'ams.rb'), # active model serializer
         File.join('initializers', 'app_config.rb'),
@@ -95,16 +98,16 @@ module GrappiTemplate
       end
     end
 
-    def copy_libs
+    def copy_minimal_libs
       copy_file_to File.join('lib', 'rake_heroku_deployer.rb')
     end
 
-    def copy_locales
+    def copy_minimal_locales
       copy_file_to File.join('config', 'locales', 'service_response.en.yml')
       copy_file_to File.join('config', 'locales', 'service_response.pt-BR.yml')
     end
 
-    def copy_helpers
+    def copy_minimal_helpers
       [
         File.join('api', 'helpers', 'application_helpers.rb'),
         File.join('api', 'helpers', 'paginate_helpers.rb'),
@@ -114,7 +117,7 @@ module GrappiTemplate
       end
     end
 
-    def copy_http_api_routes
+    def copy_minimal_http_api_routes
       [
         File.join('api', 'base.rb'),
         File.join('api', 'v1', 'base.rb'),
@@ -124,21 +127,21 @@ module GrappiTemplate
       end
     end
 
-    def copy_mailers
+    def copy_minimal_mailers
       copy_file_to File.join('mailers', 'application_mailer.rb'), File.join('app', 'mailers', 'application_mailer.rb')
       copy_directory File.join('views', 'layouts', 'mailer.html.erb'), File.join('app', 'views', 'layouts', 'mailer.html.erb')
     end
 
-    def copy_rake_tasks
+    def copy_minimal_rake_tasks
       copy_directory 'rake_tasks', File.join('lib', 'tasks')
     end
 
     # In minimal setup only system services are necessary
-    def copy_services
+    def copy_minimal_services
       copy_directory File.join('services', 'v1', 'system'), File.join('lib', 'services', 'v1', 'system')
     end
 
-    def copy_specs
+    def copy_minimal_specs
       copy_spec_config
     end
 
@@ -149,7 +152,7 @@ module GrappiTemplate
 
     ### ==== Configuration setup starts ====
 
-    def setup_configurations
+    def setup_minimal_configurations
       configure_application_rb
       configure_config_ru
       configure_environments
@@ -228,14 +231,14 @@ module GrappiTemplate
 
     ### ==== Gems setup ====
 
-    def setup_gems
-      setup_core_gems
-      setup_deploy_gems
-      setup_development_gems
-      setup_staging_gems
+    def setup_minimal_gems
+      setup_minimal_core_gems
+      setup_minimal_deploy_gems
+      setup_minimal_development_gems
+      setup_minimal_staging_gems
     end
 
-    def setup_core_gems
+    def setup_minimal_core_gems
       gem 'pg'
       gem 'sequel'
 
@@ -256,7 +259,7 @@ module GrappiTemplate
       gem 'rollbar', '~> 1.4.4'
     end
 
-    def setup_deploy_gems
+    def setup_minimal_deploy_gems
       # deploy specific
       gem_group :development do
         # pretty print for capistrano tasks
@@ -276,7 +279,7 @@ module GrappiTemplate
       end
     end
 
-    def setup_development_gems
+    def setup_minimal_development_gems
       gem_group :development do
         gem 'brakeman', require: false
         gem 'letter_opener'
@@ -284,7 +287,7 @@ module GrappiTemplate
       end
     end
 
-    def setup_staging_gems
+    def setup_minimal_staging_gems
       gem_group :staging, :test do
         gem 'factory_girl_rails', '~> 4.0'
         gem 'rspec-rails', '~> 3.0'
@@ -296,8 +299,12 @@ module GrappiTemplate
     ### ==== Setup routes ====
 
     # Send all requests to Grape
-    def setup_routes
+    def setup_minimal_routes
       route "mount API::Base => '/'"
+    end
+
+    def finish_minimal_template
+      comment_lines 'Gemfile', /gem 'spring'/
     end
   end
 end
